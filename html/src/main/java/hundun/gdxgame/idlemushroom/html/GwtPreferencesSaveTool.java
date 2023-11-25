@@ -1,45 +1,34 @@
-package hundun.gdxgame.idledemo.desktop;
-
-import java.io.IOException;
+package hundun.gdxgame.idlemushroom.html;
 
 import com.badlogic.gdx.Gdx;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-
+import com.github.nmorel.gwtjackson.client.ObjectMapper;
+import com.google.gwt.core.client.GWT;
 import hundun.gdxgame.corelib.base.save.AbstractSaveDataSaveTool;
 import hundun.gdxgame.idlemushroom.logic.RootSaveData;
-
 
 
 /**
  * @author hundun
  * Created on 2021/11/10
  */
-public class PreferencesSaveTool extends AbstractSaveDataSaveTool<RootSaveData> {
+public class GwtPreferencesSaveTool extends AbstractSaveDataSaveTool<RootSaveData> {
+
     
-    private ObjectMapper objectMapper;
+    private SaveDataMapper objectMapper;
     
-    public PreferencesSaveTool(String preferencesName) {
+    public static interface SaveDataMapper extends ObjectMapper<RootSaveData> {}
+    
+    
+    public GwtPreferencesSaveTool(String preferencesName) {
         super(preferencesName);
-        this.objectMapper = new ObjectMapper()
-                .enable(SerializationFeature.INDENT_OUTPUT)
-                ;
-        
+        this.objectMapper = GWT.create(SaveDataMapper.class);
     }
-
-
-
-    @Override
-    public void lazyInitOnGameCreate() {
-        this.preferences = Gdx.app.getPreferences(preferencesName);
-    }
-
 
 
     @Override
     public void writeRootSaveData(RootSaveData saveData) {
         try {
-            preferences.putString(ROOT_KEY, objectMapper.writeValueAsString(saveData));
+            preferences.putString(ROOT_KEY, objectMapper.write(saveData));
             preferences.flush();
             Gdx.app.log(getClass().getSimpleName(), "save() done");
         } catch (Exception e) {
@@ -51,13 +40,15 @@ public class PreferencesSaveTool extends AbstractSaveDataSaveTool<RootSaveData> 
 
     @Override
     public RootSaveData readRootSaveData() {
+
         try {
             String date = preferences.getString(ROOT_KEY);
-            RootSaveData saveData = objectMapper.readValue(date, RootSaveData.class);
+            RootSaveData saveData = objectMapper.read(date);
             return saveData;
-        } catch (IOException e) {
+        } catch (Exception e) {
             Gdx.app.error(getClass().getSimpleName(), "load() error", e);
             return null;
         }
+        
     }
 }

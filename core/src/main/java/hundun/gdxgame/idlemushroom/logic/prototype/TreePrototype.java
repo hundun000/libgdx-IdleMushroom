@@ -1,6 +1,7 @@
 package hundun.gdxgame.idlemushroom.logic.prototype;
 
 import hundun.gdxgame.idlemushroom.logic.construction.BaseIdleDemoConstruction;
+import hundun.gdxgame.idlemushroom.util.IdleMushroomJavaFeatureForGwt;
 import hundun.gdxgame.idleshare.gamelib.framework.model.construction.AbstractConstructionPrototype;
 import hundun.gdxgame.idleshare.gamelib.framework.model.construction.base.BaseConstruction;
 import hundun.gdxgame.idleshare.gamelib.framework.model.construction.base.DescriptionPackage;
@@ -10,7 +11,7 @@ import hundun.gdxgame.idleshare.gamelib.framework.model.construction.starter.Sim
 import hundun.gdxgame.idleshare.gamelib.framework.model.grid.GridPosition;
 import hundun.gdxgame.idleshare.gamelib.framework.util.text.Language;
 
-import java.util.UUID;
+
 
 public class TreePrototype extends AbstractConstructionPrototype {
     public static DescriptionPackage descriptionPackageEN = DescriptionPackage.builder()
@@ -43,7 +44,7 @@ public class TreePrototype extends AbstractConstructionPrototype {
 
     @Override
     public BaseConstruction getInstance(GridPosition position) {
-        String id = prototypeId + "_" + UUID.randomUUID().toString();
+        String id = prototypeId + "_" + IdleMushroomJavaFeatureForGwt.uuid();
 
         BaseIdleDemoConstruction thiz = new BaseIdleDemoConstruction(prototypeId, id, position, descriptionPackage);
 

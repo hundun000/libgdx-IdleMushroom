@@ -1,10 +1,10 @@
 package hundun.gdxgame.idlemushroom.ui.shared;
 
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import hundun.gdxgame.gamelib.starter.listerner.ILogicFrameListener;
 import hundun.gdxgame.idlemushroom.IdleMushroomGame;
 import hundun.gdxgame.idlemushroom.logic.RootSaveData;
 import hundun.gdxgame.idleshare.core.starter.ui.component.BackgroundImageBox;
-import hundun.gdxgame.idleshare.core.starter.ui.component.GameAreaControlBoard;
 import hundun.gdxgame.idleshare.core.starter.ui.screen.play.BaseIdleScreen;
 import hundun.gdxgame.idleshare.core.starter.ui.screen.play.PlayScreenLayoutConst;
 
@@ -22,6 +22,16 @@ public abstract class BaseIdleMushroomScreen extends BaseIdleScreen<IdleMushroom
     
     public BaseIdleMushroomScreen(IdleMushroomGame game, String screenId, PlayScreenLayoutConst layoutConst) {
         super(game, screenId, layoutConst);
+    }
+
+    @Override
+    protected void onLogicFrame() {
+        super.onLogicFrame();
+
+        if (logicFrameHelper.getClockCount() % logicFrameHelper.secondToFrameNum(10) == 0)
+        {
+            game.getSaveHandler().gameSaveCurrent();
+        }
     }
 
     @Override

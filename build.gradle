@@ -6,7 +6,6 @@ buildscript {
         mavenLocal()
         mavenCentral()
         maven { url "https://plugins.gradle.org/m2/" }
-        //maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
         google()
     }
     dependencies {
@@ -19,7 +18,7 @@ allprojects {
     apply plugin: "eclipse"
     apply plugin: "java"
     apply plugin: 'java-library'
-    
+
     java {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
@@ -28,12 +27,16 @@ allprojects {
     
     ext {
         appName = "hundun-idlemushroom"
-        gdxVersion = '1.10.0'
-        gdxFreeTypeGwtVersion = '1.9.10.1'
         gwtFrameworkVersion = '2.8.2'
 
+        hundunLibVersion = '77884f68d3'
         hundunIdleAllVersion = '36c9fc802b'
+
+        gdxVersion = '1.10.0'
+        gdxFreeTypeGwtVersion = '1.9.10.1'
+        screenmanagerVersion = '0.6.8'
         raeleusStripeVersion = '1.4.1'
+        vfxVersion = '0.5.0'
     }
 
     repositories {
@@ -68,9 +71,40 @@ project(":html") {
     apply plugin: "war"
     apply plugin: "org.gretty"
 
+    configurations { lombok }
+
     dependencies {
-        //implementation project(':IdleMushroom-game:core')
-        //implementation project(":idleshare:html")
+        implementation project(':core')
+        implementation "com.github.hundun000.libgdx-hundun-lib:corelib:$hundunLibVersion"
+        implementation "com.github.hundun000.libgdx-hundun-lib:corelib:$hundunLibVersion:sources"
+        implementation "com.github.hundun000.libgdx-hundun-lib:gamelib:$hundunLibVersion"
+        implementation "com.github.hundun000.libgdx-hundun-lib:gamelib:$hundunLibVersion:sources"
+        implementation "com.github.hundun000.hundun-idle-all:core:$hundunIdleAllVersion"
+        implementation "com.github.hundun000.hundun-idle-all:core:$hundunIdleAllVersion:sources"
+        implementation "com.github.hundun000.hundun-idle-all:html:$hundunIdleAllVersion"
+        implementation "com.github.hundun000.hundun-idle-all:html:$hundunIdleAllVersion:sources"
+        implementation "com.github.hundun000.hundun-idle-all:gamelib:$hundunIdleAllVersion"
+        implementation "com.github.hundun000.hundun-idle-all:gamelib:$hundunIdleAllVersion:sources"
+
+        implementation "com.github.intrigus.gdx-freetype-gwt:gdx-freetype-gwt:$gdxFreeTypeGwtVersion"
+        implementation "com.github.intrigus.gdx-freetype-gwt:gdx-freetype-gwt:$gdxFreeTypeGwtVersion:sources"
+
+        implementation "com.github.raeleus.stripe:stripe:$raeleusStripeVersion:sources"
+        implementation "com.github.raeleus.stripe:freetype:$raeleusStripeVersion:sources"
+
+        implementation "com.github.crykn:libgdx-screenmanager:$screenmanagerVersion:sources"
+        implementation "com.github.crykn:libgdx-screenmanager-gwt:$screenmanagerVersion"
+        implementation "com.github.crykn:libgdx-screenmanager-gwt:$screenmanagerVersion:sources"
+        implementation "com.github.tommyettinger:formic:0.1.4:sources"
+
+        implementation "com.crashinvaders.vfx:gdx-vfx-core:$vfxVersion:sources"
+        implementation "com.crashinvaders.vfx:gdx-vfx-gwt:$vfxVersion"
+        implementation "com.crashinvaders.vfx:gdx-vfx-gwt:$vfxVersion:sources"
+        implementation "com.crashinvaders.vfx:gdx-vfx-effects:$vfxVersion:sources"
+
+        compileOnly 'org.projectlombok:lombok:1.18.4'
+        annotationProcessor 'org.projectlombok:lombok:1.18.4'
+
     }
 }
 

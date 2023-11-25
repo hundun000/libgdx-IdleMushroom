@@ -6,6 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Null;
+import hundun.gdxgame.gamelib.base.util.JavaFeatureForGwt;
 import hundun.gdxgame.idlemushroom.IdleMushroomGame;
 import hundun.gdxgame.idlemushroom.ui.screen.WorldPlayScreen;
 import hundun.gdxgame.idleshare.gamelib.framework.model.construction.base.BaseConstruction;
@@ -126,7 +127,7 @@ public class HexCellVM extends Table {
             this.hightLightImage.setDrawable(null);
         }
         if (game.debugMode) {
-            this.mainLabel.setText(String.format(
+            this.mainLabel.setText(JavaFeatureForGwt.stringFormat(
                     "(%s, %s)",
                     deskData.getSaveData().getPosition().getX(),
                     deskData.getSaveData().getPosition().getY()
