@@ -1,0 +1,77 @@
+buildscript {
+    ext {
+        gwtPluginVersion = '1.1.16'
+    }
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        maven { url "https://plugins.gradle.org/m2/" }
+        //maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+        google()
+    }
+    dependencies {
+        classpath "org.wisepersist:gwt-gradle-plugin:$gwtPluginVersion"
+        classpath 'org.gretty:gretty:3.0.5'
+    }
+}
+
+allprojects {
+    apply plugin: "eclipse"
+    apply plugin: "java"
+    apply plugin: 'java-library'
+    
+    java {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+    
+    
+    ext {
+        appName = "hundun-idlemushroom"
+        gdxVersion = '1.10.0'
+        gdxFreeTypeGwtVersion = '1.9.10.1'
+        gwtFrameworkVersion = '2.8.2'
+
+        hundunIdleAllVersion = '36c9fc802b'
+        raeleusStripeVersion = '1.4.1'
+    }
+
+    repositories {
+        mavenCentral()
+        maven { url 'https://jitpack.io' }
+    }
+
+}
+
+
+
+project(":core") {
+
+    dependencies {
+        api "com.github.hundun000.hundun-idle-all:core:$hundunIdleAllVersion"
+
+        compileOnly 'org.projectlombok:lombok:1.18.4'
+        annotationProcessor 'org.projectlombok:lombok:1.18.4'
+    }
+}
+
+project(":desktop") {
+
+    dependencies {
+        implementation project(":core")
+        implementation "com.github.hundun000.hundun-idle-all:desktop:$hundunIdleAllVersion"
+    }
+}
+
+project(":html") {
+    apply plugin: "gwt"
+    apply plugin: "war"
+    apply plugin: "org.gretty"
+
+    dependencies {
+        //implementation project(':IdleMushroom-game:core')
+        //implementation project(":idleshare:html")
+    }
+}
+
+eclipse.project.name = appName
