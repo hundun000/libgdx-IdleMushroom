@@ -22,8 +22,8 @@ public class DirtPrototype extends AbstractConstructionPrototype {
     public static DescriptionPackage descriptionPackageEN = DescriptionPackage.builder()
             .levelDescriptionProvider(DescriptionPackageFactory.NO_LEVEL_IMP)
             .transformButtonText("Transform")
-            .transformCostDescriptionStart("Transform Cost: ")
-            .extraTexts(JavaFeatureForGwt.listOf("Transform Candidate: "))
+            .transformCostDescriptionStart("Cost: ")
+            .extraTexts(JavaFeatureForGwt.listOf("Candidate: "))
             .proficiencyDescriptionProvider(DescriptionPackageFactory.EN_PROFICIENCY_IMP)
             .build();
 
@@ -31,7 +31,7 @@ public class DirtPrototype extends AbstractConstructionPrototype {
     public static DescriptionPackage descriptionPackageCN = DescriptionPackage.builder()
             .levelDescriptionProvider(DescriptionPackageFactory.CN_NO_LEVEL_IMP)
             .transformButtonText("转变")
-            .transformCostDescriptionStart("转变费用: ")
+            .transformCostDescriptionStart("费用: ")
             .extraTexts(JavaFeatureForGwt.listOf("可转变："))
             .proficiencyDescriptionProvider(DescriptionPackageFactory.CN_PROFICIENCY_IMP)
             .build();
@@ -59,6 +59,8 @@ public class DirtPrototype extends AbstractConstructionPrototype {
 
         BaseIdleDemoConstruction thiz = new BaseIdleDemoConstruction(prototypeId, id, position, descriptionPackage);
 
+        thiz.setAllowPositionOverwrite(true);
+
         ConstProficiencyComponent proficiencyComponent = new ConstProficiencyComponent(thiz);
         thiz.setProficiencyComponent(proficiencyComponent);
 
@@ -82,7 +84,7 @@ public class DirtPrototype extends AbstractConstructionPrototype {
                         ConstructionBuyCandidateConfig.builder()
                                 .prototypeId(IdleMushroomConstructionPrototypeId.EPOCH_2_MUSHROOM_AUTO_PROVIDER)
                                 .buyCostPack(DemoBuiltinConstructionsLoader.toPack(JavaFeatureForGwt.mapOf(
-                                        ResourceType.MUSHROOM, 50
+                                        ResourceType.MUSHROOM, 100
                                 )))
                                 .build()
                 ));
@@ -92,7 +94,7 @@ public class DirtPrototype extends AbstractConstructionPrototype {
                         ConstructionBuyCandidateConfig.builder()
                                 .prototypeId(IdleMushroomConstructionPrototypeId.EPOCH_3_MUSHROOM_AUTO_PROVIDER)
                                 .buyCostPack(DemoBuiltinConstructionsLoader.toPack(JavaFeatureForGwt.mapOf(
-                                        ResourceType.MUSHROOM, 50
+                                        ResourceType.MUSHROOM, 200
                                 )))
                                 .build()
                 ));

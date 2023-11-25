@@ -2,9 +2,11 @@ package hundun.gdxgame.idlemushroom.ui.achievement;
 
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import hundun.gdxgame.idlemushroom.logic.DemoAchievementLoader;
 import hundun.gdxgame.idlemushroom.ui.shared.BaseIdleMushroomScreen;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class AllAchievementBoardVM extends Table {
@@ -42,6 +44,8 @@ public class AllAchievementBoardVM extends Table {
         childTable.clearChildren();
 
         parent.getGame().getIdleGameplayExport().getGameplayContext().getAchievementManager().getAchievementInfoPackage().getSortedAchievementList()
+                .stream()
+                .sorted(Comparator.comparingInt(o -> DemoAchievementLoader.achievementSortWeightMap.get(o.getAchievement().getId())))
                 .forEach(it -> {
                     OneAchievementNodeVM constructionView = new OneAchievementNodeVM(parent, it, true);
                     nodes.add(constructionView);

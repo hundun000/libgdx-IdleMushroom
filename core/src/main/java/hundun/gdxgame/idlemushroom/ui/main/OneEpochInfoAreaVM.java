@@ -21,6 +21,7 @@ public class OneEpochInfoAreaVM extends Table {
     Label epochInfoLabel;
     Label maxLevelLabel;
     Table mainClickerPart;
+    boolean isPreviewNextLevel;
 
     public OneEpochInfoAreaVM(
             MainPlayScreen parent
@@ -68,9 +69,9 @@ public class OneEpochInfoAreaVM extends Table {
         // ------ update text ------
         mainClickerPart.clearChildren();
         if (epochConfig != null) {
-            epochInfoLabel.setText("时期：" + epochLevel);
-            maxLevelLabel.setText("蘑菇等级上限：" + epochConfig.getMaxLevel());
-            ConstructionDetailPartVM.resourcePackAsActor(mainClickerConstruction.getOutputComponent().getOutputGainPack(), mainClickerPart, parent);
+            epochInfoLabel.setText(epochCounterConstruction.getDescriptionPackage().getExtraTexts().get(0) + epochLevel);
+            maxLevelLabel.setText(epochCounterConstruction.getDescriptionPackage().getExtraTexts().get(1) + epochConfig.getMaxLevel());
+            ConstructionDetailPartVM.resourcePackAsActor(mainClickerConstruction.getOutputComponent().getOutputGainPack(), mainClickerPart, parent, isPreviewNextLevel);
         } else {
             epochInfoLabel.setText("");
             maxLevelLabel.setText("");
@@ -83,9 +84,11 @@ public class OneEpochInfoAreaVM extends Table {
     public void updateAsConstruction(
             @Null RootEpochConfig epochConfig,
             BaseConstruction epochCounterConstruction,
-            int epochLevel
+            int epochLevel,
+            boolean isPreviewNextLevel
     ) {
         this.epochCounterConstruction = epochCounterConstruction;
+        this.isPreviewNextLevel = isPreviewNextLevel;
         this.mainClickerConstruction = parent.getGame().getIdleGameplayExport().getGameplayContext().getConstructionManager()
                 .getSingletonConstructionInstancesOrEmpty()
                 .stream()

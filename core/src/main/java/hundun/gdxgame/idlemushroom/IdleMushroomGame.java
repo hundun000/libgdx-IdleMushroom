@@ -8,6 +8,7 @@ import hundun.gdxgame.gamelib.base.util.JavaFeatureForGwt;
 import hundun.gdxgame.gamelib.base.save.ISaveTool;
 import hundun.gdxgame.idlemushroom.ui.screen.IdleMushroomScreenContext;
 import hundun.gdxgame.idlemushroom.logic.*;
+import hundun.gdxgame.idlemushroom.ui.screen.IdleMushroomScreenContext.IdleMushroomPlayScreenLayoutConst;
 import hundun.gdxgame.idleshare.core.framework.BaseIdleGame;
 import hundun.gdxgame.idleshare.core.framework.model.manager.AbstractIdleScreenContext;
 import hundun.gdxgame.idleshare.core.framework.model.manager.AudioPlayManager;
@@ -21,12 +22,14 @@ import java.util.Map;
 
 
 public class IdleMushroomGame extends BaseIdleGame<RootSaveData> {
-
+    @Getter
+    IdleMushroomPlayScreenLayoutConst idleMushroomPlayScreenLayoutConst;
     @Getter
     protected AbstractIdleScreenContext<IdleMushroomGame, RootSaveData> screenContext;
 
     @Getter
     private final IdleMushroomTextureManager idleMushroomTextureManager;
+    @Getter
     private final IdleMushroomScreenContext idleMushroomScreenContext;
     @Getter
     private final IdleMushroomGameDictionary idleMushroomGameDictionary;
@@ -42,7 +45,7 @@ public class IdleMushroomGame extends BaseIdleGame<RootSaveData> {
                         .constructionEpochConfigMap(JavaFeatureForGwt.mapOf(
                                 IdleMushroomConstructionPrototypeId.EPOCH_1_MUSHROOM_AUTO_PROVIDER,
                                 ConstructionEpochConfig.builder()
-                                        .transformToPrototypeId(null)
+                                        .transformToPrototypeId(IdleMushroomConstructionPrototypeId.EPOCH_2_EMPTY_CELL)
                                         .build(),
                                 IdleMushroomConstructionPrototypeId.EPOCH_1_EMPTY_CELL,
                                 ConstructionEpochConfig.builder()
@@ -59,7 +62,7 @@ public class IdleMushroomGame extends BaseIdleGame<RootSaveData> {
                         .constructionEpochConfigMap(JavaFeatureForGwt.mapOf(
                                 IdleMushroomConstructionPrototypeId.EPOCH_2_MUSHROOM_AUTO_PROVIDER,
                                 ConstructionEpochConfig.builder()
-                                        .transformToPrototypeId(null)
+                                        .transformToPrototypeId(IdleMushroomConstructionPrototypeId.EPOCH_3_EMPTY_CELL)
                                         .build(),
                                 IdleMushroomConstructionPrototypeId.EPOCH_2_EMPTY_CELL,
                                 ConstructionEpochConfig.builder()
@@ -103,11 +106,12 @@ public class IdleMushroomGame extends BaseIdleGame<RootSaveData> {
     protected void createStage1() {
         super.createStage1();
         this.mainSkin = new FreeTypeSkin(Gdx.files.internal("skins/IdleMushroom/IdleMushroom.json"));
+        this.idleMushroomPlayScreenLayoutConst = new IdleMushroomPlayScreenLayoutConst(this.getWidth(), this.getHeight());
         this.idleGameplayExport = new IdleGameplayExport(
                 frontend,
                 idleMushroomGameDictionary,
                 new DemoBuiltinConstructionsLoader(),
-                new DemoAchievementLoader(),
+                new DemoAchievementLoader(idleMushroomGameDictionary),
                 BaseIdleScreen.LOGIC_FRAME_PER_SECOND,
                 childGameConfig
                 );

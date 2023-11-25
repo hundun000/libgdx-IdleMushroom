@@ -30,15 +30,12 @@ public class DemoSaveHandler extends PairChildrenSaveHandler<RootSaveData, Syste
         Map<String, ConstructionSaveData> map = new HashMap<>();
 
         GridPosition uselessPosition = new GridPosition(0, 0);
-        GridPosition providerPosition = new GridPosition(1, 1);
         List<GridPosition> worldGridPositions = new ArrayList<>();
-        int size = 6;
+        int size = 8;
         for (int i = - size / 2 ; i < size / 2; i++) {
             for (int j = - size / 2; j < size / 2; j++) {
                 GridPosition emptyPosition = new GridPosition(i, j);
-                if (!emptyPosition.equals(providerPosition)) {
-                    worldGridPositions.add(emptyPosition);
-                }
+                worldGridPositions.add(emptyPosition);
             }
         }
         map.put(
@@ -68,20 +65,10 @@ public class DemoSaveHandler extends PairChildrenSaveHandler<RootSaveData, Syste
                         .position(uselessPosition)
                         .build()
         );
-        map.put(
-                IdleMushroomConstructionPrototypeId.EPOCH_1_MUSHROOM_AUTO_PROVIDER + "_" + UUID.randomUUID(),
-                ConstructionSaveData.builder()
-                        .prototypeId(IdleMushroomConstructionPrototypeId.EPOCH_1_MUSHROOM_AUTO_PROVIDER)
-                        .level(1)
-                        .workingLevel(1)
-                        .position(providerPosition)
-                        .build()
-        );
-
 
         worldGridPositions.forEach(it -> {
             double rand = Math.random();
-            if (rand > 0.3) {
+            if (rand > 0.25) {
                 map.put(
                         IdleMushroomConstructionPrototypeId.EPOCH_1_EMPTY_CELL + "_" + UUID.randomUUID(),
                         ConstructionSaveData.builder()
@@ -106,14 +93,17 @@ public class DemoSaveHandler extends PairChildrenSaveHandler<RootSaveData, Syste
         });
 
         Map<String, Long> ownResources = new HashMap<>();
-        ownResources.put(ResourceType.MUSHROOM, 5000L);
-        ownResources.put(ResourceType.DNA_POINT, 5000L);
+        ownResources.put(ResourceType.MUSHROOM, 40L);
+        ownResources.put(ResourceType.DNA_POINT, 0L);
 
         return RootSaveData.builder()
                 .gameplaySave(GameplaySaveData.builder()
                         .constructionSaveDataMap(map)
                         .ownResources(ownResources)
-                        .unlockedResourceTypes(new HashSet<>())
+                        .unlockedResourceTypes(new HashSet<>(JavaFeatureForGwt.listOf(
+                                ResourceType.MUSHROOM,
+                                ResourceType.DNA_POINT
+                        )))
                         .achievementSaveDataMap(JavaFeatureForGwt.mapOf(
                                 MushroomAchievementId.STEP_1,
                                 new AchievementSaveData(AchievementState.RUNNING)

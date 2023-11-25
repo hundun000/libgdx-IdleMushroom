@@ -13,6 +13,8 @@ import hundun.gdxgame.gamelib.base.util.JavaFeatureForGwt;
 import hundun.gdxgame.idlemushroom.IdleMushroomGame;
 import hundun.gdxgame.idlemushroom.logic.DemoScreenId;
 import hundun.gdxgame.idlemushroom.logic.RootSaveData;
+import hundun.gdxgame.idlemushroom.ui.screen.IdleMushroomScreenContext.IdleMushroomPlayScreenLayoutConst;
+import hundun.gdxgame.idlemushroom.ui.shared.BaseIdleMushroomScreen;
 import hundun.gdxgame.idleshare.core.framework.BaseIdleGame;
 import hundun.gdxgame.idleshare.core.starter.ui.screen.menu.BaseIdleMenuScreen;
 import hundun.gdxgame.idleshare.core.starter.ui.screen.play.BaseIdleScreen;
@@ -30,15 +32,14 @@ import java.util.stream.Stream;
  * Created on 2023/02/16
  */
 public class DemoMenuScreen extends BaseHundunScreen<IdleMushroomGame, RootSaveData> {
+    @Getter
+    IdleMushroomGame idleMushroomGame;
 
-    int BUTTON_WIDTH = 100;
-    int BUTTON_BIG_HEIGHT = 100;
-    int BUTTON_SMALL_HEIGHT = 75;
 
     final InputListener buttonContinueGameInputListener;
     final InputListener buttonNewGameInputListener;
 
-    Label titleLabel;
+
     Image backImage;
     TextButton buttonContinueGame;
     TextButton buttonNewGame;
@@ -47,7 +48,7 @@ public class DemoMenuScreen extends BaseHundunScreen<IdleMushroomGame, RootSaveD
 
     public DemoMenuScreen(IdleMushroomGame game) {
         super(game, game.getSharedViewport());
-
+        this.idleMushroomGame = game;
         this.buttonContinueGameInputListener = new InputListener(){
             @Override
             public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
@@ -78,10 +79,6 @@ public class DemoMenuScreen extends BaseHundunScreen<IdleMushroomGame, RootSaveD
 
     private void initScene2d() {
         List<String> memuScreenTexts = game.getIdleGameplayExport().getGameDictionary().getMenuScreenTexts(game.getIdleGameplayExport().getLanguage());
-        this.titleLabel = new Label(
-                JavaFeatureForGwt.stringFormat("     %s     ", memuScreenTexts.get(0)),
-                game.getMainSkin());
-        titleLabel.setFontScale(1.5f);
         this.backImage = new Image(game.getTextureManager().getMenuTexture());
         backImage.setFillParent(true);
 
@@ -97,20 +94,21 @@ public class DemoMenuScreen extends BaseHundunScreen<IdleMushroomGame, RootSaveD
 
         backUiStage.addActor(backImage);
 
-        uiRootTable.add(titleLabel)
+        uiRootTable.add(new Image(game.getIdleMushroomTextureManager().getTitleImage()))
                 .row();
+        IdleMushroomPlayScreenLayoutConst layoutConst = this.getIdleMushroomGame().getIdleMushroomPlayScreenLayoutConst();
 
         if (game.getSaveHandler().hasContinuedGameplaySave()) {
             uiRootTable.add(buttonContinueGame)
-                    .height(BUTTON_BIG_HEIGHT)
-                    .fillY()
+                    .width(layoutConst.menuButtonWidth)
+                    .height(layoutConst.menuButtonHeight * 1.5f)
                     .padTop(10)
                     .row();
         }
 
         uiRootTable.add(buttonNewGame)
-                .height(game.getSaveHandler().hasContinuedGameplaySave() ? BUTTON_SMALL_HEIGHT : BUTTON_BIG_HEIGHT)
-                .fillY()
+                .width(layoutConst.menuButtonWidth)
+                .height(layoutConst.menuButtonHeight)
                 .padTop(10)
                 .row();
 
@@ -153,13 +151,13 @@ public class DemoMenuScreen extends BaseHundunScreen<IdleMushroomGame, RootSaveD
 
     public static class LanguageSwitchBoard<T_GAME extends BaseIdleGame<T_SAVE>, T_SAVE> extends Table {
 
-        BaseHundunScreen<T_GAME, T_SAVE> parent;
+        DemoMenuScreen parent;
         @Getter
         SelectBox<String> selectBox;
         Label restartHintLabel;
         private final Map<Language, String> languageShowNameMap;
 
-        LanguageSwitchBoard(BaseHundunScreen<T_GAME, T_SAVE> parent,
+        LanguageSwitchBoard(DemoMenuScreen parent,
                             Language[] values,
                             Language current,
                             String startText,
@@ -167,9 +165,8 @@ public class DemoMenuScreen extends BaseHundunScreen<IdleMushroomGame, RootSaveD
                             Consumer<Language> onSelect
         ) {
             this.parent = parent;
-            this.setBackground(DrawableFactory.getSimpleBoardBackground());
+            this.setBackground(parent.getIdleMushroomGame().getIdleMushroomTextureManager().getTableType1Drawable());
             this.languageShowNameMap = parent.getGame().getIdleGameplayExport().getGameDictionary().getLanguageShowNameMap();
-
             this.add(new Label(startText, parent.getGame().getMainSkin()));
 
 

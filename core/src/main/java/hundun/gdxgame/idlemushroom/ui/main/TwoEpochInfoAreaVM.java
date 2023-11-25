@@ -41,11 +41,11 @@ public class TwoEpochInfoAreaVM extends Table {
         int nextEpochLevel = currentEpochLevel + 1;
         RootEpochConfig nextEpochConfig = IdleMushroomGame.epochConfigMap.get(nextEpochLevel);
         titleLabel.setText(epochCounterConstruction.getDetailDescriptionConstPart());
-        currentLevelInfoAreaVM.updateAsConstruction(epochConfig, epochCounterConstruction, currentEpochLevel);
+        currentLevelInfoAreaVM.updateAsConstruction(epochConfig, epochCounterConstruction, currentEpochLevel, false);
         midPart.clearChildren();
         if (nextEpochConfig != null) {
             midPart.addActor(new Label("-->", parent.getGame().getMainSkin()));
-            nextLevelInfoAreaVM.updateAsConstruction(nextEpochConfig, epochCounterConstruction, nextEpochLevel);
+            nextLevelInfoAreaVM.updateAsConstruction(nextEpochConfig, epochCounterConstruction, nextEpochLevel, true);
         }else {
             midPart.addActor(new Label("max", parent.getGame().getMainSkin()));
             nextLevelInfoAreaVM.setVisible(false);

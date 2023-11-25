@@ -14,7 +14,10 @@ public class IdleMushroomTextureManager extends AbstractTextureManager {
 
     @Getter
     TextureRegion questionMarkTexture;
-
+    @Getter
+    Texture titleImage;
+    @Getter
+    Texture castleImage;
     @Getter
     Drawable tableType1Drawable;
 
@@ -56,7 +59,9 @@ public class IdleMushroomTextureManager extends AbstractTextureManager {
         }
 
         achievementMaskBoardTexture = new Texture(Gdx.files.internal("win.png"));
-        menuTexture = new Texture(Gdx.files.internal("menu.png"));
+        menuTexture = new Texture(Gdx.files.internal("bg_grasslands.png"));
+        titleImage = new Texture(Gdx.files.internal("title.png"));
+        castleImage = new Texture(Gdx.files.internal("bg_castle.png"));
 
         tableType1Drawable = quickTableNinePatchDrawable(new Texture(Gdx.files.internal("table.9.png")));
         tableType2Drawable = quickTableNinePatchDrawable(new Texture(Gdx.files.internal("table_2.png")));
@@ -83,8 +88,8 @@ public class IdleMushroomTextureManager extends AbstractTextureManager {
             Texture texture = new Texture(Gdx.files.internal("resourceIcons.png"));
             TextureRegion[][] regions = TextureRegion.split(texture, 16, 16);
             defaultIcon = regions[0][0];
-            resourceIconMap.put(ResourceType.DNA_POINT, regions[0][1]);
-            resourceIconMap.put(ResourceType.MUSHROOM, regions[0][2]);
+            resourceIconMap.put(ResourceType.DNA_POINT, regions[0][4]);
+            resourceIconMap.put(ResourceType.MUSHROOM, regions[0][3]);
         }
         {
             Texture texture = new Texture(Gdx.files.internal("resourceEntities.png"));
@@ -105,10 +110,10 @@ public class IdleMushroomTextureManager extends AbstractTextureManager {
             TextureRegion[][] regions = TextureRegion.split(texture, 100, 50);
             gameAreaLeftPartRegionMap.put(DemoScreenId.SCREEN_MAIN, regions[0][0]);
             gameAreaLeftPartRegionMap.put(DemoScreenId.SCREEN_WORLD, regions[1][0]);
-            //gameAreaLeftPartRegionMap.put(GameArea.AREA_WIN, regions[2][0]);
+            gameAreaLeftPartRegionMap.put(DemoScreenId.SCREEN_ACHIEVEMENT, regions[2][0]);
             gameAreaRightPartRegionMap.put(DemoScreenId.SCREEN_MAIN, regions[0][1]);
             gameAreaRightPartRegionMap.put(DemoScreenId.SCREEN_WORLD, regions[1][1]);
-            //gameAreaRightPartRegionMap.put(GameArea.AREA_WIN, regions[2][1]);
+            gameAreaRightPartRegionMap.put(DemoScreenId.SCREEN_ACHIEVEMENT, regions[2][1]);
         }
         {
             Texture texture = new Texture(Gdx.files.internal("bg_shroom.png"));

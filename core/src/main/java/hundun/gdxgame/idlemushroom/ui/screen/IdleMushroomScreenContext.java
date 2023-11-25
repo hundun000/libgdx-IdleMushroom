@@ -27,26 +27,17 @@ public class IdleMushroomScreenContext extends AbstractIdleScreenContext<IdleMus
     public static class IdleMushroomPlayScreenLayoutConst extends PlayScreenLayoutConst {
 
         public float questionMarkAreaSize = 32;
-        public int EPOCH_PART_CHILD_WIDTH = 100;
-        public int SELLER_PART_CHILD_WIDTH = 100;
+        public int EPOCH_PART_CHILD_WIDTH = 150;
+        public int SELLER_PART_CHILD_WIDTH = 150;
         public int EpochInfoArea_CHILD_WIDTH = 200;
+        public float menuButtonWidth = 200;
+        public float menuButtonHeight = 75;
 
         public IdleMushroomPlayScreenLayoutConst(int gameLogicWidth, int gameLogicHeight) {
             super(gameLogicWidth, gameLogicHeight);
+            CONSTRUCION_CHILD_WIDTH = 150;
         }
 
-        public static IdleMushroomPlayScreenLayoutConst customLayoutConst(IdleMushroomGame game) {
-            IdleMushroomPlayScreenLayoutConst layoutConst = new IdleMushroomPlayScreenLayoutConst(game.getWidth(), game.getHeight());
-            NinePatch ninePatch = new NinePatch(game.getTextureManager().getDefaultBoardNinePatchTexture(),
-                    game.getTextureManager().getDefaultBoardNinePatchEdgeSize(),
-                    game.getTextureManager().getDefaultBoardNinePatchEdgeSize(),
-                    game.getTextureManager().getDefaultBoardNinePatchEdgeSize(),
-                    game.getTextureManager().getDefaultBoardNinePatchEdgeSize()
-            );
-            layoutConst.simpleBoardBackground = new NinePatchDrawable(ninePatch);
-            layoutConst.simpleBoardBackgroundMiddle = new TextureRegionDrawable(game.getTextureManager().getDefaultBoardNinePatchMiddle());
-            return layoutConst;
-        }
     }
 
     public IdleMushroomScreenContext(IdleMushroomGame game) {

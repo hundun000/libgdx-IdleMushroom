@@ -13,31 +13,114 @@ import java.util.List;
 import java.util.Map;
 
 public class DemoAchievementLoader implements IBuiltinAchievementsLoader {
+
+    public static Map<String, Integer> achievementSortWeightMap = JavaFeatureForGwt.mapOf(
+            MushroomAchievementId.STEP_1, 1,
+            MushroomAchievementId.STEP_2, 2,
+            MushroomAchievementId.STEP_3, 3,
+            MushroomAchievementId.STEP_4, 4
+            );
+
+    IdleMushroomGameDictionary idleMushroomGameDictionary;
+    public DemoAchievementLoader(IdleMushroomGameDictionary idleMushroomGameDictionary) {
+        this.idleMushroomGameDictionary = idleMushroomGameDictionary;
+    }
+
     @Override
     public Map<String, AbstractAchievement> getProviderMap(Language language) {
         Map<String, List<String>> textMap = new HashMap<>();
         switch (language)
         {
-            default:
+            case CN:
                 textMap.put(MushroomAchievementId.STEP_1, JavaFeatureForGwt.listOf(
-                "NO.1",
-                        "Own lv.2 AUTO_PROVIDER.",
-                        "You completed Quest NO.1."
+                        "NO.1",
+                        JavaFeatureForGwt.stringFormat(
+                                "拥有2个等级1的%s。",
+                                idleMushroomGameDictionary.constructionPrototypeIdToShowName(
+                                        language,
+                                        IdleMushroomConstructionPrototypeId.EPOCH_1_MUSHROOM_AUTO_PROVIDER
+                                )
+                        ),
+                        "你完成了任务NO.1。"
                 ));
                 textMap.put(MushroomAchievementId.STEP_2, JavaFeatureForGwt.listOf(
-                    "NO.2",
-                            "Own lv.2 AUTO_SELLER.",
-                            "You completed Quest NO.2."
+                        "NO.2",
+                        JavaFeatureForGwt.stringFormat(
+                                "拥有2个等级2的%s。",
+                                idleMushroomGameDictionary.constructionPrototypeIdToShowName(
+                                        language,
+                                        IdleMushroomConstructionPrototypeId.EPOCH_1_MUSHROOM_AUTO_PROVIDER
+                                )
+                        ),
+                        "你完成了任务NO.2。"
                 ));
                 textMap.put(MushroomAchievementId.STEP_3, JavaFeatureForGwt.listOf(
                         "NO.3",
-                        "Own lv.2 AUTO_SELLER.",
-                        "You completed Quest NO.2."
+                        JavaFeatureForGwt.stringFormat(
+                                "%s达到等级2。",
+                                idleMushroomGameDictionary.constructionPrototypeIdToShowName(
+                                        language,
+                                        IdleMushroomConstructionPrototypeId.EPOCH_COUNTER
+                                )
+                        ),
+                        "你完成了任务NO.3。"
                 ));
                 textMap.put(MushroomAchievementId.STEP_4, JavaFeatureForGwt.listOf(
                         "NO.4",
-                        "Own lv.2 AUTO_SELLER.",
+                        JavaFeatureForGwt.stringFormat(
+                                "%s达到等级3。",
+                                idleMushroomGameDictionary.constructionPrototypeIdToShowName(
+                                        language,
+                                        IdleMushroomConstructionPrototypeId.EPOCH_COUNTER
+                                )
+                        ),
+                        "你完成了任务NO.4。"
+                ));
+                break;
+            default:
+                textMap.put(MushroomAchievementId.STEP_1, JavaFeatureForGwt.listOf(
+                "NO.1",
+                        JavaFeatureForGwt.stringFormat(
+                                "Own two lv.1 %s.",
+                                idleMushroomGameDictionary.constructionPrototypeIdToShowName(
+                                        language,
+                                        IdleMushroomConstructionPrototypeId.EPOCH_1_MUSHROOM_AUTO_PROVIDER
+                                        )
+                                ),
+                        "You completed Quest NO.1."
+                ));
+                textMap.put(MushroomAchievementId.STEP_2, JavaFeatureForGwt.listOf(
+                "NO.2",
+                        JavaFeatureForGwt.stringFormat(
+                                "Own two lv.2 %s.",
+                                idleMushroomGameDictionary.constructionPrototypeIdToShowName(
+                                        language,
+                                        IdleMushroomConstructionPrototypeId.EPOCH_1_MUSHROOM_AUTO_PROVIDER
+                                )
+                        ),
                         "You completed Quest NO.2."
+                ));
+                textMap.put(MushroomAchievementId.STEP_3, JavaFeatureForGwt.listOf(
+                        "NO.3",
+                        JavaFeatureForGwt.stringFormat(
+                                "Into 2nd %s.",
+                                idleMushroomGameDictionary.constructionPrototypeIdToShowName(
+                                        language,
+                                        IdleMushroomConstructionPrototypeId.EPOCH_COUNTER
+                                )
+                        ),
+                        "You completed Quest NO.3."
+                ));
+                textMap.put(MushroomAchievementId.STEP_4, JavaFeatureForGwt.listOf(
+                        "NO.4",
+                        JavaFeatureForGwt.stringFormat(
+                                "Into 3rd %s.",
+                                idleMushroomGameDictionary.constructionPrototypeIdToShowName(
+                                        language,
+                                        IdleMushroomConstructionPrototypeId.EPOCH_COUNTER
+                                )
+                        ),
+                        "You completed Quest NO.4."
                 ));
                 break;
         }
@@ -50,37 +133,37 @@ public class DemoAchievementLoader implements IBuiltinAchievementsLoader {
                 MushroomAchievementId.STEP_1,
                 textMap,
                 JavaFeatureForGwt.mapOf(
-                        IdleMushroomConstructionPrototypeId.EPOCH_1_MUSHROOM_AUTO_PROVIDER, new SimpleEntry<>(1, 2)
+                        IdleMushroomConstructionPrototypeId.EPOCH_1_MUSHROOM_AUTO_PROVIDER, new SimpleEntry<>(2, 1)
                 ),
-                JavaFeatureForGwt.listOf(MushroomAchievementId.STEP_2, MushroomAchievementId.STEP_3, MushroomAchievementId.STEP_4),
-                new ResourcePair(ResourceType.DNA_POINT, 1000L)
+                JavaFeatureForGwt.listOf(MushroomAchievementId.STEP_2),
+                new ResourcePair(ResourceType.MUSHROOM, 50L)
         );
         OwnConstructionAchievement.Companion.quickAddOwnConstructionAchievement(
                 map,
                 MushroomAchievementId.STEP_2,
                 textMap,
                 JavaFeatureForGwt.mapOf(
-                        IdleMushroomConstructionPrototypeId.MUSHROOM_AUTO_SELLER, new SimpleEntry<>(1, 2)
+                        IdleMushroomConstructionPrototypeId.EPOCH_1_MUSHROOM_AUTO_PROVIDER, new SimpleEntry<>(2, 2)
                 ),
-                null,
-                new ResourcePair(ResourceType.DNA_POINT, 1000L)
+                JavaFeatureForGwt.listOf(MushroomAchievementId.STEP_3),
+                new ResourcePair(ResourceType.MUSHROOM, 100L)
         );
         OwnConstructionAchievement.Companion.quickAddOwnConstructionAchievement(
                 map,
                 MushroomAchievementId.STEP_3,
                 textMap,
                 JavaFeatureForGwt.mapOf(
-                        IdleMushroomConstructionPrototypeId.MUSHROOM_AUTO_SELLER, new SimpleEntry<>(1, 2)
+                        IdleMushroomConstructionPrototypeId.EPOCH_COUNTER, new SimpleEntry<>(1, 2)
                 ),
-                null,
-                new ResourcePair(ResourceType.DNA_POINT, 1000L)
+                JavaFeatureForGwt.listOf(MushroomAchievementId.STEP_4),
+                new ResourcePair(ResourceType.MUSHROOM, 200L)
         );
         OwnConstructionAchievement.Companion.quickAddOwnConstructionAchievement(
                 map,
                 MushroomAchievementId.STEP_4,
                 textMap,
                 JavaFeatureForGwt.mapOf(
-                        IdleMushroomConstructionPrototypeId.MUSHROOM_AUTO_SELLER, new SimpleEntry<>(1, 2)
+                        IdleMushroomConstructionPrototypeId.EPOCH_COUNTER, new SimpleEntry<>(1, 3)
                 ),
                 null,
                 new ResourcePair(ResourceType.DNA_POINT, 1000L)

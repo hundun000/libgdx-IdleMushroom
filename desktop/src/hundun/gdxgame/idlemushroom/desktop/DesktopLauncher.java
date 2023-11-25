@@ -9,7 +9,7 @@ import hundun.gdxgame.idlemushroom.IdleMushroomGame;
 public class DesktopLauncher {
 	public static void main (String[] arg) {
 		
-	    IdleMushroomGame game = new IdleMushroomGame(new PreferencesSaveTool("IdleMushroom-destop-save.xml"));
+	    IdleMushroomGame game = new IdleMushroomGame(new PreferencesSaveTool("IdleMushroom-desktop-save.xml"));
    
 	    LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 		config.width = (int) (game.getWidth());

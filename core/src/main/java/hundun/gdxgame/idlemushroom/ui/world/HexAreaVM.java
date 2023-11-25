@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Null;
 import hundun.gdxgame.corelib.base.util.DrawableFactory;
 import hundun.gdxgame.idlemushroom.ui.screen.WorldPlayScreen;
@@ -21,8 +22,8 @@ import java.util.Map;
 
 
 public class HexAreaVM extends Table {
-    public static final int roomWidth = 1000;
-    public static final int roomHeight = 1000;
+    public static final int roomWidth = 2000;
+    public static final int roomHeight = 2000;
 
     public WorldPlayScreen screen;
     @Getter
@@ -61,7 +62,7 @@ public class HexAreaVM extends Table {
         nodes.clear();
 
         Image background = new Image();
-        background.setDrawable(DrawableFactory.getSimpleBoardBackground());
+        background.setDrawable(new TextureRegionDrawable(screen.getGame().getIdleMushroomTextureManager().getCastleImage()));
         background.setBounds(0, 0, roomWidth, roomHeight);
         this.addActor(background);
 

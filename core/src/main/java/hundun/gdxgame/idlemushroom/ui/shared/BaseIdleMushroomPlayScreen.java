@@ -27,8 +27,8 @@ public abstract class BaseIdleMushroomPlayScreen extends BaseIdleMushroomScreen
     @Getter
     protected IdleMushroomPlayScreenLayoutConst idleMushroomPlayScreenLayoutConst;
     public BaseIdleMushroomPlayScreen(IdleMushroomGame game, String screenId) {
-        super(game, screenId, IdleMushroomPlayScreenLayoutConst.customLayoutConst(game));
-        this.idleMushroomPlayScreenLayoutConst = IdleMushroomPlayScreenLayoutConst.customLayoutConst(game);
+        super(game, screenId, game.getIdleMushroomPlayScreenLayoutConst());
+        this.idleMushroomPlayScreenLayoutConst = game.getIdleMushroomPlayScreenLayoutConst();
         this.idleMushroomGame = game;
     }
 

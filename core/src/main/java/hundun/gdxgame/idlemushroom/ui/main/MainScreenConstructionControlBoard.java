@@ -47,7 +47,7 @@ public class MainScreenConstructionControlBoard extends Table
         this.callback = callback;
 
 
-        this.setBackground(parent.getLayoutConst().simpleBoardBackground);
+        this.setBackground(parent.getGame().getIdleMushroomTextureManager().getTableType1Drawable());
         this.pad(20);
 
         if (parent.getGame().debugMode) {

@@ -76,7 +76,7 @@ public class AutoSellerPrototype extends AbstractConstructionPrototype {
         )));
 
         construction.getUpgradeComponent().setUpgradeCostPack(DemoBuiltinConstructionsLoader.toPack(JavaFeatureForGwt.mapOf(
-                ResourceType.MUSHROOM, 50
+                ResourceType.MUSHROOM, 100
         )));
         construction.getLevelComponent().setTypeWorkingLevelChangeable(true);
 

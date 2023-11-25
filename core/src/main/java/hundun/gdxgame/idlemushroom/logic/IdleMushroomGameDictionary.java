@@ -17,9 +17,8 @@ public class IdleMushroomGameDictionary implements IGameDictionary {
     
     public String constructionPrototypeIdToShowName(Language language, String constructionId) {
         switch (language) {
-            default:
+            case CN:
                 switch (constructionId) {
-
                     case IdleMushroomConstructionPrototypeId.EPOCH_1_MUSHROOM_AUTO_PROVIDER:
                     case IdleMushroomConstructionPrototypeId.EPOCH_2_MUSHROOM_AUTO_PROVIDER:
                     case IdleMushroomConstructionPrototypeId.EPOCH_3_MUSHROOM_AUTO_PROVIDER:
@@ -39,6 +38,27 @@ public class IdleMushroomGameDictionary implements IGameDictionary {
                     default:
                         return "[dic lost]";
                 }
+            default:
+                switch (constructionId) {
+                    case IdleMushroomConstructionPrototypeId.EPOCH_1_MUSHROOM_AUTO_PROVIDER:
+                    case IdleMushroomConstructionPrototypeId.EPOCH_2_MUSHROOM_AUTO_PROVIDER:
+                    case IdleMushroomConstructionPrototypeId.EPOCH_3_MUSHROOM_AUTO_PROVIDER:
+                        return "Mushroom Tile";
+                    case IdleMushroomConstructionPrototypeId.EPOCH_1_EMPTY_CELL:
+                    case IdleMushroomConstructionPrototypeId.EPOCH_2_EMPTY_CELL:
+                    case IdleMushroomConstructionPrototypeId.EPOCH_3_EMPTY_CELL:
+                        return "Empty Tile";
+                    case IdleMushroomConstructionPrototypeId.EPOCH_1_TREE:
+                    case IdleMushroomConstructionPrototypeId.EPOCH_2_TREE:
+                    case IdleMushroomConstructionPrototypeId.EPOCH_3_TREE:
+                        return "Tree Tile";
+                    case IdleMushroomConstructionPrototypeId.MUSHROOM_AUTO_SELLER:
+                        return "Research Center";
+                    case IdleMushroomConstructionPrototypeId.EPOCH_COUNTER:
+                        return "Enlargement";
+                    default:
+                        return "[dic lost]";
+                }
         }
         
         
@@ -47,7 +67,7 @@ public class IdleMushroomGameDictionary implements IGameDictionary {
     @Override
     public String constructionPrototypeIdToDetailDescriptionConstPart(Language language, String constructionId) {
         switch (language) {
-            default:
+            case CN:
                 switch (constructionId) {
                     case IdleMushroomConstructionPrototypeId.EPOCH_1_MUSHROOM_AUTO_PROVIDER:
                     case IdleMushroomConstructionPrototypeId.EPOCH_2_MUSHROOM_AUTO_PROVIDER:
@@ -75,6 +95,34 @@ public class IdleMushroomGameDictionary implements IGameDictionary {
                     default:
                         return "[dic lost]";
                 }
+            default:
+                switch (constructionId) {
+                    case IdleMushroomConstructionPrototypeId.EPOCH_1_MUSHROOM_AUTO_PROVIDER:
+                    case IdleMushroomConstructionPrototypeId.EPOCH_2_MUSHROOM_AUTO_PROVIDER:
+                    case IdleMushroomConstructionPrototypeId.EPOCH_3_MUSHROOM_AUTO_PROVIDER:
+                        return constructionPrototypeIdToShowName(language, constructionId) + "：\n" +
+                                "•Timely production of mushroom resources.\n" +
+                                "•When the growth reaches its full length, it can be upgraded, and the growth length will be reset after the upgrade.\n" +
+                                "•The growth speed is related to the surrounding patches, trees benefit the growth, and the existence of other mushroom patches hinders the growth.";
+                    case IdleMushroomConstructionPrototypeId.EPOCH_1_EMPTY_CELL:
+                        return constructionPrototypeIdToShowName(language, constructionId) + "：\n" +
+                                "•Can be transformed into other tile。";
+                    case IdleMushroomConstructionPrototypeId.EPOCH_1_TREE:
+                    case IdleMushroomConstructionPrototypeId.EPOCH_2_TREE:
+                    case IdleMushroomConstructionPrototypeId.EPOCH_3_TREE:
+                        return constructionPrototypeIdToShowName(language, constructionId) + "：\n" +
+                                "•Beneficial for the growth of surrounding mushroom tiles。";
+                    case IdleMushroomConstructionPrototypeId.MUSHROOM_AUTO_SELLER:
+                        return constructionPrototypeIdToShowName(language, constructionId) + "：\n" +
+                                "•Timely consumption of mushroom resources, production of genetic points.\n" +
+                                "•The active level can be adjusted。";
+                    case IdleMushroomConstructionPrototypeId.EPOCH_COUNTER:
+                        return constructionPrototypeIdToShowName(language, constructionId) + "：\n" +
+                                "•Can consume genetic points for an enlargement.\n" +
+                                "•After the enlargement, you will lose all the original mushroom tiles (because they are relatively too small).";
+                    default:
+                        return "[dic lost]";
+                }
         }
         
 
@@ -84,9 +132,9 @@ public class IdleMushroomGameDictionary implements IGameDictionary {
     public List<String> getMenuScreenTexts(Language language) {
         switch (language) {
             case CN:
-                return JavaFeatureForGwt.arraysAsList("Idle样例", "新游戏", "继续游戏", "语言", "重启后生效");
+                return JavaFeatureForGwt.arraysAsList("放置蘑菇", "新游戏", "继续游戏", "语言", "重启后生效");
             default:
-                return JavaFeatureForGwt.arraysAsList("IdleDemo", "New Game", "Continue", "Language", "Take effect after restart");
+                return JavaFeatureForGwt.arraysAsList("Idle Mushroom", "New Game", "Continue", "Language", "Take effect after restart");
         }
     }
 
@@ -105,7 +153,7 @@ public class IdleMushroomGameDictionary implements IGameDictionary {
         {
             case CN:
                 return JavaFeatureForGwt.listOf(
-                        "当前任务：", "状态：", "回到游戏", "奖励内容：", "领取",
+                        "任务：", "状态：", "回到游戏", "奖励内容：", "领取",
                         "无"
                 );
             default:
@@ -124,7 +172,7 @@ public class IdleMushroomGameDictionary implements IGameDictionary {
 
     public String achievementStatus(Language language, AchievementState state) {
         switch (language) {
-            default:
+            case CN:
                 switch (state) {
                     case LOCKED:
                         return "未解锁";
@@ -132,6 +180,17 @@ public class IdleMushroomGameDictionary implements IGameDictionary {
                         return "进行中";
                     case COMPLETED:
                         return "已完成";
+                    default:
+                        return "[dic lost]";
+                }
+            default:
+                switch (state) {
+                    case LOCKED:
+                        return "locked";
+                    case RUNNING:
+                        return "in progress";
+                    case COMPLETED:
+                        return "completed";
                     default:
                         return "[dic lost]";
                 }

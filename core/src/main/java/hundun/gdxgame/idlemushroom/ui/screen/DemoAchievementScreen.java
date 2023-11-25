@@ -18,7 +18,7 @@ public class DemoAchievementScreen extends BaseIdleMushroomScreen implements IAc
 
 
     public DemoAchievementScreen(IdleMushroomGame game) {
-        super(game, DemoScreenId.SCREEN_ACHIEVEMENT, IdleMushroomPlayScreenLayoutConst.customLayoutConst(game));
+        super(game, DemoScreenId.SCREEN_ACHIEVEMENT, game.getIdleMushroomPlayScreenLayoutConst());
     }
 
     @Override

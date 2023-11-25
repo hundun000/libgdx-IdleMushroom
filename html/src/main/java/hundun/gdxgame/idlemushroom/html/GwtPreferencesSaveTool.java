@@ -46,7 +46,9 @@ public class GwtPreferencesSaveTool extends AbstractSaveDataSaveTool<RootSaveDat
             RootSaveData saveData = objectMapper.read(date);
             return saveData;
         } catch (Exception e) {
-            Gdx.app.error(getClass().getSimpleName(), "load() error", e);
+            Gdx.app.error(getClass().getSimpleName(), "load() error, will clear.", e);
+            preferences.clear();
+            preferences.flush();
             return null;
         }
         

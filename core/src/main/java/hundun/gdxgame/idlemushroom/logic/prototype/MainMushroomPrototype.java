@@ -5,6 +5,7 @@ import hundun.gdxgame.idlemushroom.logic.DemoBuiltinConstructionsLoader;
 import hundun.gdxgame.idlemushroom.logic.ResourceType;
 import hundun.gdxgame.idlemushroom.logic.construction.BaseIdleDemoConstruction;
 import hundun.gdxgame.idlemushroom.logic.IdleMushroomConstructionPrototypeId;
+import hundun.gdxgame.idlemushroom.logic.construction.MainClickerOutputComponent;
 import hundun.gdxgame.idlemushroom.util.IdleMushroomJavaFeatureForGwt;
 import hundun.gdxgame.idleshare.gamelib.framework.model.construction.AbstractConstructionPrototype;
 import hundun.gdxgame.idleshare.gamelib.framework.model.construction.base.BaseConstruction;
@@ -20,7 +21,7 @@ import java.util.HashMap;
 
 public class MainMushroomPrototype extends AbstractConstructionPrototype {
     public static DescriptionPackage descriptionPackageEN = DescriptionPackage.builder()
-            .outputGainDescriptionStart("click gain: ")
+            .outputGainDescriptionStart("Click gain: ")
             .levelDescriptionProvider(DescriptionPackageFactory.NO_LEVEL_IMP)
             .proficiencyDescriptionProvider(DescriptionPackageFactory.EN_PROFICIENCY_IMP)
             .build();
@@ -57,7 +58,7 @@ public class MainMushroomPrototype extends AbstractConstructionPrototype {
         ConstProficiencyComponent proficiencyComponent = new ConstProficiencyComponent(construction);
         construction.setProficiencyComponent(proficiencyComponent);
 
-        SimpleAutoOutputComponent outputComponent = new SimpleAutoOutputComponent(construction);
+        MainClickerOutputComponent outputComponent = new MainClickerOutputComponent(construction);
         outputComponent.setTypeClickOutput(true);
         construction.setOutputComponent(outputComponent);
 

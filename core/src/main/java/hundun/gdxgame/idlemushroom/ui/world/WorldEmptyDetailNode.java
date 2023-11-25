@@ -199,10 +199,8 @@ public class WorldEmptyDetailNode extends BaseCellDetailNodeVM {
             costPart.clearChildren();
             ConstructionDetailPartVM.resourcePackAsActor(constructionBuyCandidateConfig.getBuyCostPack(), costPart, parent);
             // ------ update clickable-state ------
-            boolean canBuyInstanceOfPrototype = parent.getGame().getIdleGameplayExport().getGameplayContext()
-                    .getConstructionManager()
-                    .canBuyInstanceOfPrototype(constructionBuyCandidateConfig, model.getPosition());
-            if (!canBuyInstanceOfPrototype) {
+            boolean canBuyInstanceOfPrototype = this.canBuyInstanceOfPrototype(constructionBuyCandidateConfig, model.getPosition());
+            if (canBuyInstanceOfPrototype) {
                 buyButton.setDisabled(false);
                 buyButton.getLabel().setColor(Color.WHITE);
             } else {
@@ -211,6 +209,17 @@ public class WorldEmptyDetailNode extends BaseCellDetailNodeVM {
             }
         }
 
+        public boolean canBuyInstanceOfPrototype(ConstructionBuyCandidateConfig config, GridPosition position)
+        {
+            List<BaseConstruction> worldConstructionInstances = parent.getGame().getIdleGameplayExport().getGameplayContext()
+                    .getConstructionManager()
+                    .getWorldConstructionInstances();
+            boolean isCostEnough = parent.getGame().getIdleGameplayExport().getGameplayContext().getStorageManager().isEnough(config.getBuyCostPack().getModifiedValues());
+            boolean positionAllowCase1 = worldConstructionInstances.stream().noneMatch(it -> it.getPosition().equals(position));
+            boolean positionAllowCase2 = worldConstructionInstances.stream().anyMatch(it -> it.getPosition().equals(position) && it.isAllowPositionOverwrite());
+            return isCostEnough && (positionAllowCase1 || positionAllowCase2);
+
+        }
 
         public void subLogicFrame() {
             update();

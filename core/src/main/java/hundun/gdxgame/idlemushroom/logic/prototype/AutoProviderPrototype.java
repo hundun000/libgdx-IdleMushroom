@@ -88,7 +88,7 @@ public class AutoProviderPrototype extends AbstractConstructionPrototype {
         )));
 
         construction.getUpgradeComponent().setUpgradeCostPack(DemoBuiltinConstructionsLoader.toPack(JavaFeatureForGwt.mapOf(
-                ResourceType.DNA_POINT, 50
+                ResourceType.MUSHROOM, 50
         )));
 
         construction.getLevelComponent().maxLevel = rootEpochConfig.getMaxLevel();
@@ -106,16 +106,28 @@ public class AutoProviderPrototype extends AbstractConstructionPrototype {
 
         @Override
         protected void tryProficiencyOnce() {
-            long neighborCount = construction.getNeighbors().values().stream()
+            long neighborProviderCount = construction.getNeighbors().values().stream()
                     .map(it -> (BaseConstruction)it)
                     .filter(it -> it != null
-                                    && (
+                            && (
                                     it.getSaveData().prototypeId.equals(IdleMushroomConstructionPrototypeId.EPOCH_1_MUSHROOM_AUTO_PROVIDER)
                                             || it.getSaveData().prototypeId.equals(IdleMushroomConstructionPrototypeId.EPOCH_2_MUSHROOM_AUTO_PROVIDER)
+                                            || it.getSaveData().prototypeId.equals(IdleMushroomConstructionPrototypeId.EPOCH_3_MUSHROOM_AUTO_PROVIDER)
                             )
                     )
                     .count();
-            this.changeProficiency((int) neighborCount);
+            long neighborTreeCount = construction.getNeighbors().values().stream()
+                    .map(it -> (BaseConstruction)it)
+                    .filter(it -> it != null
+                                    && (
+                                    it.getSaveData().prototypeId.equals(IdleMushroomConstructionPrototypeId.EPOCH_1_TREE)
+                                            || it.getSaveData().prototypeId.equals(IdleMushroomConstructionPrototypeId.EPOCH_2_TREE)
+                                            || it.getSaveData().prototypeId.equals(IdleMushroomConstructionPrototypeId.EPOCH_3_TREE)
+                            )
+                    )
+                    .count();
+            int add = (int) Math.max(0, 1 + neighborTreeCount * 2 - neighborProviderCount);
+            this.changeProficiency(add);
         }
     }
 }

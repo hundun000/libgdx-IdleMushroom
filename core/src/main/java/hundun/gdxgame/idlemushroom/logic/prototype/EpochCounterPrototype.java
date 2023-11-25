@@ -24,6 +24,10 @@ public class EpochCounterPrototype extends AbstractConstructionPrototype {
             .upgradeMaxLevelDescription("(max)")
             .levelDescriptionProvider(DescriptionPackageFactory.ONLY_LEVEL_IMP)
             .proficiencyDescriptionProvider(DescriptionPackageFactory.EN_PROFICIENCY_IMP)
+            .extraTexts(JavaFeatureForGwt.listOf(
+                    "Enlargement: ",
+                    "Tile max level: "
+            ))
             .build();
 
 
@@ -33,6 +37,10 @@ public class EpochCounterPrototype extends AbstractConstructionPrototype {
             .upgradeMaxLevelDescription("(已达到最大等级)")
             .levelDescriptionProvider(DescriptionPackageFactory.ONLY_LEVEL_IMP)
             .proficiencyDescriptionProvider(DescriptionPackageFactory.CN_PROFICIENCY_IMP)
+            .extraTexts(JavaFeatureForGwt.listOf(
+                    "巨大化: ",
+                    "地块等级上限: "
+            ))
             .build();
 
     public EpochCounterPrototype(Language language) {
@@ -70,11 +78,9 @@ public class EpochCounterPrototype extends AbstractConstructionPrototype {
         thiz.getUpgradeComponent().setCalculateCostFunction((baseValue, level) -> {
             switch (level) {
                 case 1:
-                    return 50L;
+                    return 1024L;
                 case 2:
-                    return 100L;
-                case 3:
-                    return 150L;
+                    return 1024 * 1024L;
                 default:
                     return 1L;
             }
