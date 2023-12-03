@@ -79,6 +79,7 @@ public class AutoSellerPrototype extends AbstractConstructionPrototype {
                 ResourceType.MUSHROOM, 100
         )));
         construction.getLevelComponent().setTypeWorkingLevelChangeable(true);
+        construction.getLevelComponent().maxLevel = 100;
 
         return construction;
     }
