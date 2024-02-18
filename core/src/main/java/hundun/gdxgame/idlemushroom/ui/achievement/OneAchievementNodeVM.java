@@ -4,7 +4,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Null;
 import hundun.gdxgame.idlemushroom.ui.shared.BaseIdleMushroomScreen;
-import hundun.gdxgame.idleshare.gamelib.framework.model.manager.AchievementManager.AchievementAndStatus;
+import hundun.gdxgame.idleshare.gamelib.framework.model.achievement.AchievementManager.AchievementAndStatus;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -32,9 +32,9 @@ public class OneAchievementNodeVM extends Table {
         this.setBackground(parent.getGame().getTextureManager().getDefaultBoardNinePatchDrawable());
         this.achievementAndStatus = achievementAndStatus;
 
-        this.texts = parent.getGame().getIdleGameplayExport().getGameDictionary()
+        this.texts = parent.getGame().getIdleMushroomGameDictionary()
                 .getAchievementTexts(parent.getGame().getIdleGameplayExport().getLanguage());
-        this.setBackground(parent.getGame().getIdleMushroomTextureManager().getTableType3Drawable());
+        this.setBackground(parent.getGame().getTextureManager().getTableType3Drawable());
 
 
         nameStartLabel = new Label("", parent.getGame().getMainSkin());
@@ -43,7 +43,7 @@ public class OneAchievementNodeVM extends Table {
         descriptionLabel = new Label("", parent.getGame().getMainSkin());
         descriptionLabel.setWrap(true);
         descriptionContainer = new Table();
-        descriptionContainer.setBackground(parent.getGame().getIdleMushroomTextureManager().getTableType5Drawable());
+        descriptionContainer.setBackground(parent.getGame().getTextureManager().getTableType5Drawable());
         descriptionContainer.add(descriptionLabel).grow().center();
 
         countStartLabel = new Label("", parent.getGame().getMainSkin());

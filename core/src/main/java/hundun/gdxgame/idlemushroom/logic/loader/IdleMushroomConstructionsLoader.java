@@ -1,12 +1,11 @@
-package hundun.gdxgame.idlemushroom.logic;
+package hundun.gdxgame.idlemushroom.logic.loader;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import hundun.gdxgame.idlemushroom.IdleMushroomGame;
-import hundun.gdxgame.idlemushroom.IdleMushroomGame.RootEpochConfig;
+import hundun.gdxgame.idlemushroom.logic.id.IdleMushroomConstructionPrototypeId;
 import hundun.gdxgame.idlemushroom.logic.prototype.*;
 import hundun.gdxgame.idleshare.gamelib.framework.model.construction.*;
 import hundun.gdxgame.idleshare.gamelib.framework.model.construction.base.IBuiltinConstructionsLoader;
@@ -15,13 +14,10 @@ import hundun.gdxgame.idleshare.gamelib.framework.model.resource.ResourcePair;
 import hundun.gdxgame.idleshare.gamelib.framework.util.text.Language;
 
 
-public class DemoBuiltinConstructionsLoader implements IBuiltinConstructionsLoader {
+public class IdleMushroomConstructionsLoader implements IBuiltinConstructionsLoader {
 
     @Override
     public Map<String, AbstractConstructionPrototype> getProviderMap(Language language) {
-        RootEpochConfig epochConfig1 = IdleMushroomGame.epochConfigMap.get(1);
-        RootEpochConfig epochConfig2 = IdleMushroomGame.epochConfigMap.get(2);
-        RootEpochConfig epochConfig3 = IdleMushroomGame.epochConfigMap.get(3);
         Map<String, AbstractConstructionPrototype> result = new HashMap<>();
         result.put(IdleMushroomConstructionPrototypeId.EPOCH_1_EMPTY_CELL, new DirtPrototype(
                 IdleMushroomConstructionPrototypeId.EPOCH_1_EMPTY_CELL,
@@ -49,17 +45,14 @@ public class DemoBuiltinConstructionsLoader implements IBuiltinConstructionsLoad
         ));
         result.put(IdleMushroomConstructionPrototypeId.EPOCH_1_MUSHROOM_AUTO_PROVIDER, new AutoProviderPrototype(
                 IdleMushroomConstructionPrototypeId.EPOCH_1_MUSHROOM_AUTO_PROVIDER,
-                epochConfig1,
                 language
         ));
         result.put(IdleMushroomConstructionPrototypeId.EPOCH_2_MUSHROOM_AUTO_PROVIDER, new AutoProviderPrototype(
                 IdleMushroomConstructionPrototypeId.EPOCH_2_MUSHROOM_AUTO_PROVIDER,
-                epochConfig2,
                 language
         ));
         result.put(IdleMushroomConstructionPrototypeId.EPOCH_3_MUSHROOM_AUTO_PROVIDER, new AutoProviderPrototype(
                 IdleMushroomConstructionPrototypeId.EPOCH_3_MUSHROOM_AUTO_PROVIDER,
-                epochConfig3,
                 language
         ));
         result.put(IdleMushroomConstructionPrototypeId.MUSHROOM_AUTO_SELLER, new AutoSellerPrototype(language));

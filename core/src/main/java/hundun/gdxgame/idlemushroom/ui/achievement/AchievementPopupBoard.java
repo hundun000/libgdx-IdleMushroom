@@ -11,10 +11,9 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 
 import com.badlogic.gdx.utils.Null;
-import hundun.gdxgame.idlemushroom.IdleMushroomGame;
 import hundun.gdxgame.idlemushroom.ui.shared.BaseIdleMushroomPlayScreen;
-import hundun.gdxgame.idleshare.core.starter.ui.component.ResourceAmountPairNode;
-import hundun.gdxgame.idleshare.gamelib.framework.model.achievement.AbstractAchievement;
+import hundun.gdxgame.idlemushroom.ui.shared.ConstructionDetailPartVM.IdleMushroomResourceAmountPairNode;
+import hundun.gdxgame.idleshare.gamelib.framework.model.achievement.AbstractAchievementPrototype;
 import hundun.gdxgame.idleshare.gamelib.framework.model.resource.ResourcePair;
 
 import java.util.List;
@@ -40,7 +39,7 @@ public class AchievementPopupBoard extends Table {
 
     }
 
-    private void rebuildUi(@Null AbstractAchievement prototype) {
+    private void rebuildUi(@Null AbstractAchievementPrototype prototype) {
         this.clearChildren();
 
         Label label = new Label(prototype != null ? prototype.getDescription() : "", parent.getGame().getMainSkin());
@@ -50,7 +49,7 @@ public class AchievementPopupBoard extends Table {
             Label rewardLabel = new Label(texts.get(3), parent.getGame().getMainSkin());
             this.add(rewardLabel).center().row();
             for (ResourcePair entry : prototype.getAwardResourceMap()) {
-                ResourceAmountPairNode<IdleMushroomGame> node = new ResourceAmountPairNode<>(parent.getGame(), entry.getType());
+                IdleMushroomResourceAmountPairNode node = new IdleMushroomResourceAmountPairNode(parent.getGame(), entry.getType());
                 node.update(entry.getAmount());
                 this.add(node)
                         .height(parent.getLayoutConst().RESOURCE_AMOUNT_PAIR_NODE_HEIGHT)
@@ -74,7 +73,7 @@ public class AchievementPopupBoard extends Table {
     }
 
 
-    public void setAchievementPrototype(AbstractAchievement prototype) {
+    public void setAchievementPrototype(AbstractAchievementPrototype prototype) {
 
         rebuildUi(prototype);
 

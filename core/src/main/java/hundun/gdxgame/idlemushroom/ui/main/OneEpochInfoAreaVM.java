@@ -3,32 +3,31 @@ package hundun.gdxgame.idlemushroom.ui.main;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Null;
+import hundun.gdxgame.idlemushroom.IdleMushroomGame;
 import hundun.gdxgame.idlemushroom.IdleMushroomGame.RootEpochConfig;
-import hundun.gdxgame.idlemushroom.logic.IdleMushroomConstructionPrototypeId;
 import hundun.gdxgame.idlemushroom.ui.screen.IdleMushroomScreenContext.IdleMushroomPlayScreenLayoutConst;
-import hundun.gdxgame.idlemushroom.ui.screen.MainPlayScreen;
 import hundun.gdxgame.idlemushroom.ui.shared.ConstructionDetailPartVM;
-import hundun.gdxgame.idleshare.gamelib.framework.model.construction.base.BaseConstruction;
+import hundun.gdxgame.idleshare.gamelib.framework.model.buff.BuffManager.BuffAndStatus;
+
+import java.util.stream.Collectors;
 
 public class OneEpochInfoAreaVM extends Table {
 
-    MainPlayScreen parent;
-    BaseConstruction epochCounterConstruction;
-    BaseConstruction mainClickerConstruction;
+    IdleMushroomGame game;
     @Null
     RootEpochConfig epochConfig;
-    int epochLevel;
     Label epochInfoLabel;
     Label maxLevelLabel;
+    Label buffLabel;
     Table mainClickerPart;
     boolean isPreviewNextLevel;
 
     public OneEpochInfoAreaVM(
-            MainPlayScreen parent
+            IdleMushroomGame game
     ) {
         super();
-        final IdleMushroomPlayScreenLayoutConst playScreenLayoutConst = parent.getIdleMushroomPlayScreenLayoutConst();
-        this.parent = parent;
+        final IdleMushroomPlayScreenLayoutConst playScreenLayoutConst = game.getIdleMushroomPlayScreenLayoutConst();
+        this.game = game;
 
         int CHILD_WIDTH = playScreenLayoutConst.EpochInfoArea_CHILD_WIDTH;
         int CHILD_HEIGHT = playScreenLayoutConst.CONSTRUCION_CHILD_BUTTON_HEIGHT;
@@ -37,44 +36,50 @@ public class OneEpochInfoAreaVM extends Table {
         // ------ changeWorkingLevelGroup ------
 
 
-        this.epochInfoLabel = new Label("", parent.getGame().getMainSkin());
+        this.epochInfoLabel = new Label("", game.getMainSkin());
         epochInfoLabel.setAlignment(Align.center);
-        this.maxLevelLabel = new Label("", parent.getGame().getMainSkin());
+        this.maxLevelLabel = new Label("", game.getMainSkin());
         maxLevelLabel.setAlignment(Align.center);
-        this.mainClickerPart = new Table(parent.getGame().getMainSkin());
+        this.buffLabel = new Label("", game.getMainSkin());
+        buffLabel.setAlignment(Align.center);
+        this.mainClickerPart = new Table(game.getMainSkin());
 
         // ------ this ------
         this.add(epochInfoLabel).row();
         this.add(maxLevelLabel).row();
+        this.add(buffLabel).row();
         this.add(mainClickerPart).row();
 
-        this.setBackground(parent.getGame().getIdleMushroomTextureManager().getTableType3Drawable());
+        this.setBackground(game.getTextureManager().getTableType3Drawable());
     }
 
     private void update() {
-        // ------ update show-state ------
-        if (epochCounterConstruction == null) {
-            setVisible(false);
-            //textButton.setVisible(false);
-            //Gdx.app.log("ConstructionView", this.hashCode() + " no model");
-            return;
-        } else {
-            setVisible(true);
-            //textButton.setVisible(true);
-            //Gdx.app.log("ConstructionView", model.getName() + " set to its view");
-        }
+
 
 
 
         // ------ update text ------
         mainClickerPart.clearChildren();
         if (epochConfig != null) {
-            epochInfoLabel.setText(epochCounterConstruction.getDescriptionPackage().getExtraTexts().get(0) + epochLevel);
-            maxLevelLabel.setText(epochCounterConstruction.getDescriptionPackage().getExtraTexts().get(1) + epochConfig.getMaxLevel());
-            ConstructionDetailPartVM.resourcePackAsActor(mainClickerConstruction.getOutputComponent().getOutputGainPack(), mainClickerPart, parent, isPreviewNextLevel);
+            epochInfoLabel.setText(game.getIdleMushroomExtraGameplayExport().getEpochCounterConstruction()
+                    .getDescriptionPackage().getExtraTexts().get(0) + epochConfig.getEnlargementLevel());
+            maxLevelLabel.setText(game.getIdleMushroomExtraGameplayExport().getEpochCounterConstruction()
+                    .getDescriptionPackage().getExtraTexts().get(1) + epochConfig.getMaxLevel());
+            String buffLabelText = epochConfig.getBuffEpochConfigMap().entrySet().stream()
+                            .map(it -> {
+                                BuffAndStatus buffAndStatus = game.getIdleGameplayExport().getGameplayContext().getBuffManager().getBuffAndStatus(it.getKey());
+                                return buffAndStatus.getBuffPrototype().getName() + ": " + it.getValue().getBuffLevel();
+                            })
+                            .collect(Collectors.joining("\n"));
+            buffLabel.setText(buffLabelText);
+            ConstructionDetailPartVM.resourcePackAsActor(
+                    game.getIdleMushroomExtraGameplayExport().getMainClickerConstruction().getDescriptionPackage().getOutputGainDescriptionStart(),
+                    game.getIdleMushroomExtraGameplayExport().getMainClickerConstruction().getOutputComponent().getOutputGainPack(),
+                    mainClickerPart, game, isPreviewNextLevel);
         } else {
             epochInfoLabel.setText("");
             maxLevelLabel.setText("");
+            buffLabel.setText("");
         }
 
 
@@ -83,20 +88,10 @@ public class OneEpochInfoAreaVM extends Table {
 
     public void updateAsConstruction(
             @Null RootEpochConfig epochConfig,
-            BaseConstruction epochCounterConstruction,
-            int epochLevel,
             boolean isPreviewNextLevel
     ) {
-        this.epochCounterConstruction = epochCounterConstruction;
         this.isPreviewNextLevel = isPreviewNextLevel;
-        this.mainClickerConstruction = parent.getGame().getIdleGameplayExport().getGameplayContext().getConstructionManager()
-                .getSingletonConstructionInstancesOrEmpty()
-                .stream()
-                .filter(it -> it.getPrototypeId().equals(IdleMushroomConstructionPrototypeId.MAIN_MUSHROOM))
-                .findAny()
-                .orElse(null);
         this.epochConfig = epochConfig;
-        this.epochLevel = epochLevel;
         update();
     }
 }

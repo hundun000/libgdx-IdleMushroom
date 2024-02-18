@@ -8,13 +8,20 @@ import com.badlogic.gdx.graphics.g2d.freetype.gwt.inject.OnCompletion;
 
 import hundun.gdxgame.idlemushroom.IdleMushroomGame;
 import hundun.gdxgame.idlemushroom.html.GwtPreferencesSaveTool;
+import hundun.gdxgame.idlemushroom.logic.ProxyManager;
+import hundun.gdxgame.idlemushroom.logic.ProxyManager.IProxyManagerCallback;
 
 public class HtmlLauncher extends GwtApplication {
 
     private final IdleMushroomGame game;
     
     public HtmlLauncher() {
-        game = new IdleMushroomGame(new GwtPreferencesSaveTool("IdleMushroomGame-html-save"));
+        game = new IdleMushroomGame(
+                new GwtPreferencesSaveTool("IdleMushroomGame-html-save"),
+                new IProxyManagerCallback() {
+
+                }
+        );
     }
     
     @Override

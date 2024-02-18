@@ -8,13 +8,14 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Align;
 import hundun.gdxgame.gamelib.base.util.JavaFeatureForGwt;
-import hundun.gdxgame.idlemushroom.ui.screen.WorldPlayScreen;
+import hundun.gdxgame.idlemushroom.ui.screen.IdleMushroomScreenContext.IdleMushroomPlayScreenLayoutConst;
+import hundun.gdxgame.idlemushroom.ui.screen.IdleMushroomWorldPlayScreen;
 import hundun.gdxgame.idlemushroom.ui.shared.BaseCellDetailNodeVM;
 import hundun.gdxgame.idlemushroom.ui.shared.BaseIdleMushroomPlayScreen;
 import hundun.gdxgame.idlemushroom.ui.shared.ConstructionDetailPartVM;
-import hundun.gdxgame.idleshare.core.starter.ui.component.board.construction.impl.StarterConstructionControlNode.StarterSecondaryInfoBoardCallerClickListener;
-import hundun.gdxgame.idleshare.core.starter.ui.screen.play.PlayScreenLayoutConst;
+import hundun.gdxgame.idleshare.core.framework.StarterSecondaryInfoBoardCallerClickListener;
 import hundun.gdxgame.idleshare.gamelib.framework.model.construction.base.BaseConstruction;
+import hundun.gdxgame.idleshare.gamelib.framework.model.construction.base.DescriptionPackage;
 import hundun.gdxgame.idleshare.gamelib.framework.model.grid.GridPosition;
 
 
@@ -24,7 +25,7 @@ import hundun.gdxgame.idleshare.gamelib.framework.model.grid.GridPosition;
  */
 public class WorldMushroomDetailNode extends BaseCellDetailNodeVM {
     BaseIdleMushroomPlayScreen parent;
-    BaseConstruction model;
+    BaseConstruction construction;
     Label constructionNameLabel;
 
     Label workingLevelLabel;
@@ -38,10 +39,10 @@ public class WorldMushroomDetailNode extends BaseCellDetailNodeVM {
     ConstructionDetailPartVM rightPart;
 
     public WorldMushroomDetailNode(
-            WorldPlayScreen parent
+            IdleMushroomWorldPlayScreen parent
             ) {
         super();
-        final PlayScreenLayoutConst playScreenLayoutConst = parent.getLayoutConst();
+        final IdleMushroomPlayScreenLayoutConst playScreenLayoutConst = parent.getLayoutConst();
         this.parent = parent;
 
         this.leftPart = new Table();
@@ -60,7 +61,7 @@ public class WorldMushroomDetailNode extends BaseCellDetailNodeVM {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 Gdx.app.log(WorldMushroomDetailNode.class.getSimpleName(), "upgradeButton changed");
-                model.getUpgradeComponent().doUpgrade();
+                construction.getUpgradeComponent().doUpgrade();
             }
         });
 
@@ -75,10 +76,10 @@ public class WorldMushroomDetailNode extends BaseCellDetailNodeVM {
 
         this.positionLabel = new Label("", parent.getGame().getMainSkin());
 
-        Container<?> questionMarkArea = new Container<>(new Image(parent.getGame().getIdleMushroomTextureManager().getQuestionMarkTexture()));
-        questionMarkArea.setBackground(parent.getGame().getIdleMushroomTextureManager().getQuestionMarkTableDrawable());
+        Container<?> questionMarkArea = new Container<>(new Image(parent.getGame().getTextureManager().getQuestionMarkTexture()));
+        questionMarkArea.setBackground(parent.getGame().getTextureManager().getQuestionMarkTableDrawable());
         questionMarkArea.setTouchable(Touchable.enabled);
-        questionMarkArea.addListener(new StarterSecondaryInfoBoardCallerClickListener(() -> model, parent));
+        questionMarkArea.addListener(new StarterSecondaryInfoBoardCallerClickListener<>(() -> construction, parent));
 
         // ------ leftPart ------
         leftPart.add(constructionNameLabel).size(CHILD_WIDTH, NAME_CHILD_HEIGHT);
@@ -93,7 +94,7 @@ public class WorldMushroomDetailNode extends BaseCellDetailNodeVM {
         leftPart.add(progressBar).colspan(2).size(CHILD_WIDTH, CHILD_HEIGHT);
         leftPart.row();
 
-        this.setBackground(parent.getGame().getIdleMushroomTextureManager().getTableType3Drawable());
+        this.setBackground(parent.getGame().getTextureManager().getTableType3Drawable());
         this.add(leftPart).padRight(20);
         this.add(rightPart);
     }
@@ -106,7 +107,7 @@ public class WorldMushroomDetailNode extends BaseCellDetailNodeVM {
 
     private void update() {
         // ------ update show-state ------
-        if (model == null) {
+        if (construction == null) {
             setVisible(false);
             //textButton.setVisible(false);
             //Gdx.app.log("ConstructionView", this.hashCode() + " no model");
@@ -114,22 +115,22 @@ public class WorldMushroomDetailNode extends BaseCellDetailNodeVM {
         } else {
             setVisible(true);
             //textButton.setVisible(true);
-            //Gdx.app.log("ConstructionView", model.getName() + " set to its view");
+            //Gdx.app.log("ConstructionView", model.getDescriptionPackage().getName() + " set to its view");
         }
         // ------ update text ------
         constructionNameLabel.setText(JavaFeatureForGwt.stringFormat(
                 "%s",
-                model.getName()
+                construction.getDescriptionPackage().getName()
         ));
-        upgradeButton.setText(model.getDescriptionPackage().getUpgradeButtonText());
-        workingLevelLabel.setText(model.getLevelComponent().getWorkingLevelDescription());
-        proficiencyLabel.setText(model.getProficiencyComponent().getProficiencyDescroption());
-        progressBar.setRange(0, model.getProficiencyComponent().maxProficiency);
-        progressBar.setValue(model.getSaveData().getProficiency());
-        positionLabel.setText(model.getSaveData().getPosition().toShowText());
+        upgradeButton.setText(construction.getDescriptionPackage().getUpgradeButtonText());
+        workingLevelLabel.setText(DescriptionPackage.Helper.getWorkingLevelDescription(construction));
+        proficiencyLabel.setText(DescriptionPackage.Helper.getProficiencyDescription(construction));
+        progressBar.setRange(0, construction.getProficiencyComponent().getMaxProficiency());
+        progressBar.setValue(construction.getSaveData().getProficiency());
+        positionLabel.setText(construction.getSaveData().getPosition().toShowText());
 
         // ------ update clickable-state ------
-        if (model.getUpgradeComponent().canUpgrade()) {
+        if (construction.getUpgradeComponent().canUpgrade()) {
             upgradeButton.setDisabled(false);
             upgradeButton.getLabel().setColor(Color.WHITE);
         } else {
@@ -146,9 +147,9 @@ public class WorldMushroomDetailNode extends BaseCellDetailNodeVM {
 
     @Override
     public void updateForNewConstruction(BaseConstruction construction, GridPosition position) {
-        this.model = construction;
+        this.construction = construction;
         update();
-        rightPart.rebuildCells(model);
+        rightPart.rebuildCells(this.construction);
     }
 
     @Override

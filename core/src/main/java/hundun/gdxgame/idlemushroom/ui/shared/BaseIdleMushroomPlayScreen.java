@@ -3,27 +3,30 @@ package hundun.gdxgame.idlemushroom.ui.shared;
 import com.badlogic.gdx.Gdx;
 import hundun.gdxgame.gamelib.starter.listerner.IGameAreaChangeListener;
 import hundun.gdxgame.idlemushroom.IdleMushroomGame;
+import hundun.gdxgame.idlemushroom.logic.ProxyManager.ProxyState;
 import hundun.gdxgame.idlemushroom.ui.achievement.AchievementPopupBoard;
 import hundun.gdxgame.idlemushroom.ui.screen.IdleMushroomScreenContext.IdleMushroomPlayScreenLayoutConst;
 import hundun.gdxgame.idlemushroom.ui.world.HexCellVM;
 import hundun.gdxgame.idlemushroom.ui.main.FirstRunningAchievementBoardVM;
 import hundun.gdxgame.idleshare.gamelib.framework.callback.IAchievementBoardCallback;
 import hundun.gdxgame.idleshare.gamelib.framework.callback.IAchievementStateChangeListener;
-import hundun.gdxgame.idleshare.gamelib.framework.model.achievement.AbstractAchievement;
-import hundun.gdxgame.idleshare.gamelib.framework.model.manager.AchievementManager.AchievementState;
+import hundun.gdxgame.idleshare.gamelib.framework.model.achievement.AbstractAchievementPrototype;
+import hundun.gdxgame.idleshare.gamelib.framework.model.achievement.AchievementManager.AchievementState;
 import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public abstract class BaseIdleMushroomPlayScreen extends BaseIdleMushroomScreen
-        implements IGameAreaChangeListener, IAchievementBoardCallback, IAchievementStateChangeListener
+        implements IGameAreaChangeListener,
+        IAchievementBoardCallback,
+        IAchievementStateChangeListener
 {
 
     protected FirstRunningAchievementBoardVM firstRunningAchievementBoardVM;
     protected AchievementPopupBoard achievementPopupBoard;
     IdleMushroomGame idleMushroomGame;
-    protected List<AbstractAchievement> showAchievementMaskBoardQueue = new ArrayList<>();
+    protected List<AbstractAchievementPrototype> showAchievementMaskBoardQueue = new ArrayList<>();
     @Getter
     protected IdleMushroomPlayScreenLayoutConst idleMushroomPlayScreenLayoutConst;
     public BaseIdleMushroomPlayScreen(IdleMushroomGame game, String screenId) {
@@ -63,17 +66,16 @@ public abstract class BaseIdleMushroomPlayScreen extends BaseIdleMushroomScreen
     public abstract void onCellClicked(HexCellVM vm);
 
     @Override
-    protected void onLogicFrame() {
-        super.onLogicFrame();
+    public void onLogicFrame() {
 
         if (showAchievementMaskBoardQueue.size() > 0) {
-            AbstractAchievement achievement = showAchievementMaskBoardQueue.remove(0);
+            AbstractAchievementPrototype achievement = showAchievementMaskBoardQueue.remove(0);
 
             game.getFrontend().log(this.getClass().getSimpleName(), "onAchievementUnlock called");
             achievementPopupBoard.setAchievementPrototype(achievement);
             achievementPopupBoard.setVisible(true);
             Gdx.input.setInputProcessor(popupUiStage);
-            logicFrameHelper.setLogicFramePause(true);
+            game.getLogicFrameHelper().setLogicFramePause(true);
         }
     }
 
@@ -82,12 +84,12 @@ public abstract class BaseIdleMushroomPlayScreen extends BaseIdleMushroomScreen
         game.getFrontend().log(this.getClass().getSimpleName(), "hideAchievementMaskBoard called");
         achievementPopupBoard.setVisible(false);
         Gdx.input.setInputProcessor(provideDefaultInputProcessor());
-        logicFrameHelper.setLogicFramePause(false);
+        game.getLogicFrameHelper().setLogicFramePause(false);
     }
 
     @Override
-    public void showAchievementMaskBoard(AbstractAchievement achievement) {
-        if (this.hidden) {
+    public void showAchievementMaskBoard(AbstractAchievementPrototype achievement) {
+        if (this.hidden || game.getProxyManager().getProxyState() == ProxyState.RUNNING) {
             return;
         }
         showAchievementMaskBoardQueue.add(achievement);
@@ -100,9 +102,7 @@ public abstract class BaseIdleMushroomPlayScreen extends BaseIdleMushroomScreen
 
         achievementPopupBoard = new AchievementPopupBoard(
                 this,
-                game.getIdleGameplayExport()
-                        .getGameplayContext()
-                        .getGameDictionary()
+                game.getIdleMushroomGameDictionary()
                         .getAchievementTexts(game.getIdleGameplayExport().getLanguage())
         );
         popupUiStage.addActor(achievementPopupBoard);
@@ -111,7 +111,7 @@ public abstract class BaseIdleMushroomPlayScreen extends BaseIdleMushroomScreen
     }
 
     @Override
-    public void onAchievementStateChange(AbstractAchievement achievement, AchievementState state) {
+    public void onAchievementStateChange(AbstractAchievementPrototype achievement, AchievementState state) {
         if (state == AchievementState.COMPLETED) {
             showAchievementMaskBoard(achievement);
             firstRunningAchievementBoardVM.updateData();

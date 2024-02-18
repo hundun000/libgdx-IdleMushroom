@@ -3,11 +3,11 @@ package hundun.gdxgame.idlemushroom.ui.world;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import hundun.gdxgame.gamelib.base.util.JavaFeatureForGwt;
-import hundun.gdxgame.idlemushroom.ui.screen.WorldPlayScreen;
+import hundun.gdxgame.idlemushroom.ui.screen.IdleMushroomScreenContext.IdleMushroomPlayScreenLayoutConst;
+import hundun.gdxgame.idlemushroom.ui.screen.IdleMushroomWorldPlayScreen;
 import hundun.gdxgame.idlemushroom.ui.shared.BaseCellDetailNodeVM;
 import hundun.gdxgame.idlemushroom.ui.shared.BaseIdleMushroomPlayScreen;
-import hundun.gdxgame.idleshare.core.starter.ui.component.board.construction.impl.StarterConstructionControlNode.StarterSecondaryInfoBoardCallerClickListener;
-import hundun.gdxgame.idleshare.core.starter.ui.screen.play.PlayScreenLayoutConst;
+import hundun.gdxgame.idleshare.core.framework.StarterSecondaryInfoBoardCallerClickListener;
 import hundun.gdxgame.idleshare.gamelib.framework.model.construction.base.BaseConstruction;
 import hundun.gdxgame.idleshare.gamelib.framework.model.grid.GridPosition;
 
@@ -26,10 +26,10 @@ public class WorldTreeDetailNode extends BaseCellDetailNodeVM {
 
 
     public WorldTreeDetailNode(
-            WorldPlayScreen parent
+            IdleMushroomWorldPlayScreen parent
             ) {
         super();
-        final PlayScreenLayoutConst playScreenLayoutConst = parent.getLayoutConst();
+        final IdleMushroomPlayScreenLayoutConst playScreenLayoutConst = parent.getLayoutConst();
         this.parent = parent;
 
 
@@ -44,16 +44,16 @@ public class WorldTreeDetailNode extends BaseCellDetailNodeVM {
         this.positionLabel = new Label("", parent.getGame().getMainSkin());
 
 
-        Container<?> questionMarkArea = new Container<>(new Image(parent.getGame().getIdleMushroomTextureManager().getQuestionMarkTexture()));
-        questionMarkArea.setBackground(parent.getGame().getIdleMushroomTextureManager().getQuestionMarkTableDrawable());
+        Container<?> questionMarkArea = new Container<>(new Image(parent.getGame().getTextureManager().getQuestionMarkTexture()));
+        questionMarkArea.setBackground(parent.getGame().getTextureManager().getQuestionMarkTableDrawable());
         questionMarkArea.setTouchable(Touchable.enabled);
-        questionMarkArea.addListener(new StarterSecondaryInfoBoardCallerClickListener(() -> model, parent));
+        questionMarkArea.addListener(new StarterSecondaryInfoBoardCallerClickListener<>(() -> model, parent));
 
         // ------ leftPart ------
         this.add(constructionNameLabel).size(CHILD_WIDTH, NAME_CHILD_HEIGHT);
         this.add(questionMarkArea).size(parent.getIdleMushroomPlayScreenLayoutConst().questionMarkAreaSize, parent.getIdleMushroomPlayScreenLayoutConst().questionMarkAreaSize);
         this.row();
-        this.setBackground(parent.getGame().getIdleMushroomTextureManager().getTableType3Drawable());
+        this.setBackground(parent.getGame().getTextureManager().getTableType3Drawable());
 
     }
 
@@ -73,12 +73,12 @@ public class WorldTreeDetailNode extends BaseCellDetailNodeVM {
         } else {
             setVisible(true);
             //textButton.setVisible(true);
-            //Gdx.app.log("ConstructionView", model.getName() + " set to its view");
+            //Gdx.app.log("ConstructionView", model.getDescriptionPackage().getName() + " set to its view");
         }
         // ------ update text ------
         constructionNameLabel.setText(JavaFeatureForGwt.stringFormat(
                 "%s",
-                model.getName()
+                model.getDescriptionPackage().getName()
         ));
         positionLabel.setText(model.getSaveData().getPosition().toShowText());
 

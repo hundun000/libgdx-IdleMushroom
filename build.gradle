@@ -30,7 +30,7 @@ allprojects {
         gwtFrameworkVersion = '2.8.2'
 
         hundunLibVersion = '77884f68d3'
-        hundunIdleAllVersion = '284499e2ea'
+        hundunIdleAllVersion = '7aa5257b44'
 
         gdxVersion = '1.10.0'
         gdxFreeTypeGwtVersion = '1.9.10.1'

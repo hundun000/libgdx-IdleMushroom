@@ -1,10 +1,10 @@
 package hundun.gdxgame.idlemushroom.logic.prototype;
 
 import hundun.gdxgame.gamelib.base.util.JavaFeatureForGwt;
-import hundun.gdxgame.idlemushroom.logic.construction.BaseIdleDemoConstruction;
-import hundun.gdxgame.idlemushroom.logic.DemoBuiltinConstructionsLoader;
-import hundun.gdxgame.idlemushroom.logic.IdleMushroomConstructionPrototypeId;
-import hundun.gdxgame.idlemushroom.logic.ResourceType;
+import hundun.gdxgame.idlemushroom.logic.construction.BaseIdleMushroomConstruction;
+import hundun.gdxgame.idlemushroom.logic.loader.IdleMushroomConstructionsLoader;
+import hundun.gdxgame.idlemushroom.logic.id.IdleMushroomConstructionPrototypeId;
+import hundun.gdxgame.idlemushroom.logic.id.ResourceType;
 import hundun.gdxgame.idlemushroom.util.IdleMushroomJavaFeatureForGwt;
 import hundun.gdxgame.idleshare.gamelib.framework.model.construction.AbstractConstructionPrototype;
 import hundun.gdxgame.idleshare.gamelib.framework.model.construction.base.BaseConstruction;
@@ -19,26 +19,34 @@ import hundun.gdxgame.idleshare.gamelib.framework.util.text.Language;
 
 public class EpochCounterPrototype extends AbstractConstructionPrototype {
     public static DescriptionPackage descriptionPackageEN = DescriptionPackage.builder()
+            .name("Genetic Modification")
+            .wikiText("Genetic Modification" + "：\n" +
+                    "•Can consume genetic points for upgrade genetic modification.\n"
+            )
             .upgradeButtonText("Upgrade")
             .upgradeCostDescriptionStart("Upgrade cost")
-            .upgradeMaxLevelDescription("(max)")
-            .levelDescriptionProvider(DescriptionPackageFactory.ONLY_LEVEL_IMP)
-            .proficiencyDescriptionProvider(DescriptionPackageFactory.EN_PROFICIENCY_IMP)
+            .upgradeMaxLevelDescription("(max level)")
+            .levelDescriptionProvider(DescriptionPackageFactory.EN_LEVEL_IMP.build())
+            .proficiencyDescriptionProvider(DescriptionPackageFactory.EN_PROFICIENCY_IMP.build())
             .extraTexts(JavaFeatureForGwt.listOf(
-                    "Enlargement: ",
+                    "Enlargement level: ",
                     "Tile max level: "
             ))
             .build();
 
 
     public static DescriptionPackage descriptionPackageCN = DescriptionPackage.builder()
+            .name("基因改造")
+            .wikiText("基因改造" + "：\n" +
+                    "•可消耗基因点数，进行一次基因改造。\n"
+            )
             .upgradeButtonText("升级")
             .upgradeCostDescriptionStart("升级费用")
             .upgradeMaxLevelDescription("(已达到最大等级)")
-            .levelDescriptionProvider(DescriptionPackageFactory.ONLY_LEVEL_IMP)
-            .proficiencyDescriptionProvider(DescriptionPackageFactory.CN_PROFICIENCY_IMP)
+            .levelDescriptionProvider(DescriptionPackageFactory.EN_LEVEL_IMP.build())
+            .proficiencyDescriptionProvider(DescriptionPackageFactory.CN_PROFICIENCY_IMP.build())
             .extraTexts(JavaFeatureForGwt.listOf(
-                    "巨大化: ",
+                    "巨大化等级: ",
                     "地块等级上限: "
             ))
             .build();
@@ -64,29 +72,21 @@ public class EpochCounterPrototype extends AbstractConstructionPrototype {
     public BaseConstruction getInstance(GridPosition position) {
         String id = prototypeId + "_" + IdleMushroomJavaFeatureForGwt.uuid();
 
-        BaseIdleDemoConstruction thiz = new BaseIdleDemoConstruction(prototypeId, id, position, descriptionPackage);
+        BaseIdleMushroomConstruction construction = new BaseIdleMushroomConstruction(prototypeId, id, position, descriptionPackage);
 
-        ConstProficiencyComponent proficiencyComponent = new ConstProficiencyComponent(thiz);
-        thiz.setProficiencyComponent(proficiencyComponent);
+        ConstProficiencyComponent proficiencyComponent = new ConstProficiencyComponent(construction);
+        construction.setProficiencyComponent(proficiencyComponent);
 
-        SimpleAutoOutputComponent outputComponent = new SimpleAutoOutputComponent(thiz);
-        thiz.setOutputComponent(outputComponent);
+        SimpleAutoOutputComponent outputComponent = new SimpleAutoOutputComponent(construction);
+        construction.setOutputComponent(outputComponent);
 
-        thiz.getUpgradeComponent().setUpgradeCostPack(DemoBuiltinConstructionsLoader.toPack(JavaFeatureForGwt.mapOf(
+        construction.getUpgradeComponent().setUpgradeCostPack(IdleMushroomConstructionsLoader.toPack(JavaFeatureForGwt.mapOf(
                 ResourceType.DNA_POINT, 0
         )));
-        thiz.getUpgradeComponent().setCalculateCostFunction((baseValue, level) -> {
-            switch (level) {
-                case 1:
-                    return 1024L;
-                case 2:
-                    return 1024 * 1024L;
-                default:
-                    return 1L;
-            }
+        construction.getUpgradeComponent().setCalculateCostFunction((baseValue, level) -> {
+            return (1L << (level - 1)) * Math.max(1, (level - 1) * 2) * 50L;
         });
-        thiz.getLevelComponent().maxLevel = 3;
 
-        return thiz;
+        return construction;
     }
 }

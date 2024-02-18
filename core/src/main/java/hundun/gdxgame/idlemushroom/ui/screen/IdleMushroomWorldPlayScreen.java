@@ -9,16 +9,16 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import hundun.gdxgame.idlemushroom.IdleMushroomGame;
-import hundun.gdxgame.idlemushroom.logic.DemoScreenId;
-import hundun.gdxgame.idlemushroom.logic.ResourceType;
+import hundun.gdxgame.idlemushroom.logic.id.IdleMushroomBuffId;
+import hundun.gdxgame.idlemushroom.logic.id.IdleMushroomScreenId;
+import hundun.gdxgame.idlemushroom.logic.id.ResourceType;
 import hundun.gdxgame.idlemushroom.ui.shared.BaseIdleMushroomPlayScreen;
+import hundun.gdxgame.idlemushroom.ui.world.CameraControlBoard;
 import hundun.gdxgame.idlemushroom.ui.world.HexCellVM;
 import hundun.gdxgame.idlemushroom.ui.world.HexAreaVM;
 import hundun.gdxgame.idlemushroom.ui.world.WorldDetailBoardVM;
-import hundun.gdxgame.idlemushroom.ui.world.WorldScreenPopupInfoBoard;
-import hundun.gdxgame.idleshare.core.framework.model.CameraDataPackage;
+import hundun.gdxgame.idleshare.core.framework.CameraDataPackage;
 import hundun.gdxgame.idleshare.gamelib.framework.callback.IConstructionCollectionListener;
-import hundun.gdxgame.idleshare.gamelib.framework.callback.ISecondaryInfoBoardCallback;
 import hundun.gdxgame.idleshare.gamelib.framework.model.construction.base.BaseConstruction;
 import lombok.Getter;
 
@@ -28,18 +28,18 @@ import java.util.List;
  * @author hundun
  * Created on 2021/11/02
  */
-public class WorldPlayScreen extends BaseIdleMushroomPlayScreen implements IConstructionCollectionListener, ISecondaryInfoBoardCallback<BaseConstruction> {
+public class IdleMushroomWorldPlayScreen extends BaseIdleMushroomPlayScreen implements IConstructionCollectionListener {
 
+    @Getter
     HexAreaVM hexAreaVM;
     protected OrthographicCamera deskCamera;
     protected Stage deskStage;
-    protected WorldScreenPopupInfoBoard secondaryInfoBoard;
     protected WorldDetailBoardVM worldDetailBoardVM;
     @Getter
     private boolean disableHexAreaInput;
 
-    public WorldPlayScreen(IdleMushroomGame game) {
-        super(game, DemoScreenId.SCREEN_WORLD);
+    public IdleMushroomWorldPlayScreen(IdleMushroomGame game) {
+        super(game, IdleMushroomScreenId.SCREEN_WORLD);
 
         this.deskCamera = new OrthographicCamera();
         this.deskStage = new Stage(new ScreenViewport(deskCamera), game.getBatch());
@@ -68,18 +68,27 @@ public class WorldPlayScreen extends BaseIdleMushroomPlayScreen implements ICons
                 .fill()
                 .colspan(UI_ROOT_TABLE_COLSPAN_SIZE)
         ;
+
+        CameraControlBoard cameraControlBoard = new CameraControlBoard(this);
+        middleGroup.add(cameraControlBoard);
+        middleGroup.right().bottom();
     }
 
     protected void lazyInitLogicContext() {
         super.lazyInitLogicContext();
         
         storageInfoTable.lazyInit(ResourceType.VALUES_FOR_SHOW_ORDER);
+        buffInfoBoard.lazyInit(IdleMushroomBuffId.VALUES_FOR_SHOW_ORDER);
 
-        this.secondaryInfoBoard = new WorldScreenPopupInfoBoard(this);
-        popupRootTable.add(secondaryInfoBoard).center().expand();
-
-        logicFrameListeners.add(worldDetailBoardVM);
         this.getGame().getIdleGameplayExport().getGameplayContext().getEventManager().registerListener(worldDetailBoardVM);
+    }
+
+    @Override
+    public void onLogicFrame() {
+        super.onLogicFrame();
+
+        worldDetailBoardVM.onLogicFrame();
+        hexAreaVM.getNodes().values().forEach(it -> it.onLogicFrame());
     }
 
     @Override
@@ -94,6 +103,7 @@ public class WorldPlayScreen extends BaseIdleMushroomPlayScreen implements ICons
 
     @Override
     protected void updateUIForShow() {
+        super.updateUIForShow();
         List<BaseConstruction> constructions = game.getIdleGameplayExport().getGameplayContext().getConstructionManager()
                 .getWorldConstructionInstances();
         hexAreaVM.updateUIForShow(constructions);
@@ -139,15 +149,4 @@ public class WorldPlayScreen extends BaseIdleMushroomPlayScreen implements ICons
         hexAreaVM.updateUIForConstructionCollectionChange(constructions);
     }
 
-    @Override
-    public void showAndUpdateGuideInfo(BaseConstruction model) {
-        secondaryInfoBoard.setVisible(true);
-        secondaryInfoBoard.update(model);
-    }
-
-    @Override
-    public void hideAndCleanGuideInfo() {
-        secondaryInfoBoard.setVisible(false);
-        //popUpInfoBoard.setText("GUIDE_TEXT");
-    }
 }

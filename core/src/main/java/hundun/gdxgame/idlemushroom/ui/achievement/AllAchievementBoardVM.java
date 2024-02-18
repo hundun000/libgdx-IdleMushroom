@@ -2,7 +2,7 @@ package hundun.gdxgame.idlemushroom.ui.achievement;
 
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import hundun.gdxgame.idlemushroom.logic.DemoAchievementLoader;
+import hundun.gdxgame.idlemushroom.logic.loader.IdleMushroomAchievementLoader;
 import hundun.gdxgame.idlemushroom.ui.shared.BaseIdleMushroomScreen;
 
 import java.util.ArrayList;
@@ -20,7 +20,7 @@ public class AllAchievementBoardVM extends Table {
     public AllAchievementBoardVM(BaseIdleMushroomScreen parent)
     {
         this.parent = parent;
-        this.setBackground(parent.getGame().getIdleMushroomTextureManager().getTableType2Drawable());
+        this.setBackground(parent.getGame().getTextureManager().getTableType2Drawable());
 
         childTable = new Table();
         //childTable.setBackground(parent.getGame().getIdleMushroomTextureManager().getTableType2Drawable());
@@ -45,7 +45,7 @@ public class AllAchievementBoardVM extends Table {
 
         parent.getGame().getIdleGameplayExport().getGameplayContext().getAchievementManager().getAchievementInfoPackage().getSortedAchievementList()
                 .stream()
-                .sorted(Comparator.comparingInt(o -> DemoAchievementLoader.achievementSortWeightMap.get(o.getAchievement().getId())))
+                .sorted(Comparator.comparingInt(o -> IdleMushroomAchievementLoader.achievementSortWeightMap.get(o.getAchievement().getId())))
                 .forEach(it -> {
                     OneAchievementNodeVM constructionView = new OneAchievementNodeVM(parent, it, true);
                     nodes.add(constructionView);

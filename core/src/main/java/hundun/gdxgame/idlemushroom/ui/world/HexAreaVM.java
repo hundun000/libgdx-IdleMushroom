@@ -6,13 +6,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Null;
-import hundun.gdxgame.corelib.base.util.DrawableFactory;
-import hundun.gdxgame.idlemushroom.ui.screen.WorldPlayScreen;
+import hundun.gdxgame.idlemushroom.ui.screen.IdleMushroomWorldPlayScreen;
 import hundun.gdxgame.idlemushroom.ui.world.HexCellVM.MaskMode;
-import hundun.gdxgame.idleshare.core.framework.model.CameraDataPackage;
+import hundun.gdxgame.idleshare.core.framework.CameraDataPackage;
 
-import hundun.gdxgame.idleshare.core.framework.model.CameraGestureListener;
-import hundun.gdxgame.idleshare.core.framework.model.CameraMouseListener;
+import hundun.gdxgame.idleshare.core.framework.CameraGestureListener;
+import hundun.gdxgame.idleshare.core.framework.CameraMouseListener;
 import hundun.gdxgame.idleshare.gamelib.framework.model.construction.base.BaseConstruction;
 import lombok.Getter;
 
@@ -22,24 +21,42 @@ import java.util.Map;
 
 
 public class HexAreaVM extends Table {
-    public static final int roomWidth = 2000;
-    public static final int roomHeight = 2000;
-
-    public WorldPlayScreen screen;
+    public static final float roomWidth = 4000.0f;
+    public static final float roomWidthBorder = 1200.0f;
+    public static final float roomHeight = 3000.0f;
+    public static final float roomHeightBorder = 1000.0f;
+    static final float RESET_CAMERA_ZOOM_WEIGHT = 2.0f;
+    static final float MAX_CAMERA_ZOOM_WEIGHT = 3.25f;
+    public IdleMushroomWorldPlayScreen screen;
     @Getter
     Map<String, HexCellVM> nodes = new LinkedHashMap<>();
     @Getter
     CameraDataPackage cameraDataPackage;
     @Null
     BaseConstruction selectedConstruction;
-    public HexAreaVM(WorldPlayScreen screen) {
+    public HexAreaVM(IdleMushroomWorldPlayScreen screen) {
         this.screen = screen;
         this.cameraDataPackage = new CameraDataPackage();
-        this.cameraDataPackage.setCameraZoomWeightOnlyAllowForceSet(true);
+        this.cameraDataPackage.setCameraZoomWeightOnlyAllowForceSet(false);
+        this.cameraDataPackage.setBoundZoomMax(MAX_CAMERA_ZOOM_WEIGHT);
+        this.cameraDataPackage.setBoundLeft(roomWidthBorder);
+        this.cameraDataPackage.setBoundRight(roomWidth - roomWidthBorder);
+        this.cameraDataPackage.setBoundUp(roomHeight - roomHeightBorder);
+        this.cameraDataPackage.setBoundDown(roomHeightBorder);
+
+        cameraReset();
 
         if (screen.getGame().debugMode) {
             this.debugAll();
         }
+    }
+
+    public void cameraReset() {
+        this.getCameraDataPackage().forceSet(
+                roomWidth / 2.0f,
+                roomHeight / 2.0f,
+                RESET_CAMERA_ZOOM_WEIGHT
+        );
     }
 
     public void updateUIForShow(
@@ -48,11 +65,6 @@ public class HexAreaVM extends Table {
         this.clear();
         this.addListener(new CameraGestureListener(cameraDataPackage));
         this.addListener(new CameraMouseListener(cameraDataPackage));
-        this.getCameraDataPackage().forceSet(
-                roomWidth / 2.0f,
-                roomHeight / 2.0f,
-                null
-        );
         updateUIForConstructionCollectionChange(constructions);
     }
 
@@ -62,7 +74,7 @@ public class HexAreaVM extends Table {
         nodes.clear();
 
         Image background = new Image();
-        background.setDrawable(new TextureRegionDrawable(screen.getGame().getIdleMushroomTextureManager().getCastleImage()));
+        background.setDrawable(new TextureRegionDrawable(screen.getGame().getTextureManager().getCastleImage()));
         background.setBounds(0, 0, roomWidth, roomHeight);
         this.addActor(background);
 

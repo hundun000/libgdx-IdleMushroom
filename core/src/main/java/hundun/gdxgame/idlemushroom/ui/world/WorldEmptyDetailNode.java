@@ -5,13 +5,12 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import hundun.gdxgame.gamelib.base.util.JavaFeatureForGwt;
-import hundun.gdxgame.idlemushroom.ui.screen.WorldPlayScreen;
+import hundun.gdxgame.idlemushroom.ui.screen.IdleMushroomScreenContext.IdleMushroomPlayScreenLayoutConst;
+import hundun.gdxgame.idlemushroom.ui.screen.IdleMushroomWorldPlayScreen;
 import hundun.gdxgame.idlemushroom.ui.shared.BaseCellDetailNodeVM;
 import hundun.gdxgame.idlemushroom.ui.shared.BaseIdleMushroomPlayScreen;
 import hundun.gdxgame.idlemushroom.ui.shared.ConstructionDetailPartVM;
-import hundun.gdxgame.idleshare.core.starter.ui.component.board.construction.impl.StarterConstructionControlNode.StarterSecondaryInfoBoardCallerClickListener;
-import hundun.gdxgame.idleshare.core.starter.ui.screen.play.PlayScreenLayoutConst;
+import hundun.gdxgame.idleshare.core.framework.StarterSecondaryInfoBoardCallerClickListener;
 import hundun.gdxgame.idleshare.gamelib.framework.data.ChildGameConfig.ConstructionBuyCandidateConfig;
 import hundun.gdxgame.idleshare.gamelib.framework.model.construction.base.BaseConstruction;
 import hundun.gdxgame.idleshare.gamelib.framework.model.grid.GridPosition;
@@ -25,7 +24,7 @@ import java.util.List;
  * Created on 2021/11/05
  */
 public class WorldEmptyDetailNode extends BaseCellDetailNodeVM {
-    WorldPlayScreen screen;
+    IdleMushroomWorldPlayScreen screen;
     BaseConstruction construction;
     GridPosition position;
     Label constructionNameLabel;
@@ -35,7 +34,7 @@ public class WorldEmptyDetailNode extends BaseCellDetailNodeVM {
 
 
     public WorldEmptyDetailNode(
-            WorldPlayScreen parent
+            IdleMushroomWorldPlayScreen parent
             ) {
         super();
         this.screen = parent;
@@ -46,7 +45,7 @@ public class WorldEmptyDetailNode extends BaseCellDetailNodeVM {
 
         this.buyCandidateKeyLabel = new Label("", parent.getGame().getMainSkin());
         // ------ this ------
-        this.setBackground(parent.getGame().getIdleMushroomTextureManager().getTableType3Drawable());
+        this.setBackground(parent.getGame().getTextureManager().getTableType3Drawable());
         this.pad(screen.getLayoutConst().WorldConstructionCellTablePad);
     }
 
@@ -67,14 +66,11 @@ public class WorldEmptyDetailNode extends BaseCellDetailNodeVM {
         } else {
             setVisible(true);
             //textButton.setVisible(true);
-            //Gdx.app.log("ConstructionView", model.getName() + " set to its view");
+            //Gdx.app.log("ConstructionView", model.getDescriptionPackage().getName() + " set to its view");
         }
         // ------ update text ------
 
-        constructionNameLabel.setText(JavaFeatureForGwt.stringFormat(
-                "%s",
-                construction.getName()
-        ));
+        constructionNameLabel.setText(construction.getDescriptionPackage().getName());
         buyCandidateKeyLabel.setText(construction.getDescriptionPackage().getExtraTexts().get(0));
     }
 
@@ -94,7 +90,7 @@ public class WorldEmptyDetailNode extends BaseCellDetailNodeVM {
         this.position = position;
 
         this.clearChildren();
-        final PlayScreenLayoutConst playScreenLayoutConst = screen.getLayoutConst();
+        final IdleMushroomPlayScreenLayoutConst playScreenLayoutConst = screen.getLayoutConst();
         int CHILD_WIDTH = playScreenLayoutConst.CONSTRUCION_CHILD_WIDTH;
         int CHILD_HEIGHT = playScreenLayoutConst.CONSTRUCION_CHILD_BUTTON_HEIGHT;
         int NAME_CHILD_HEIGHT = playScreenLayoutConst.CONSTRUCION_CHILD_NAME_HEIGHT;
@@ -102,10 +98,10 @@ public class WorldEmptyDetailNode extends BaseCellDetailNodeVM {
                 .size(CHILD_WIDTH, NAME_CHILD_HEIGHT)
                 .right();
 
-        Container<?> questionMarkArea = new Container<>(new Image(screen.getGame().getIdleMushroomTextureManager().getQuestionMarkTexture()));
-        questionMarkArea.setBackground(screen.getGame().getIdleMushroomTextureManager().getQuestionMarkTableDrawable());
+        Container<?> questionMarkArea = new Container<>(new Image(screen.getGame().getTextureManager().getQuestionMarkTexture()));
+        questionMarkArea.setBackground(screen.getGame().getTextureManager().getQuestionMarkTableDrawable());
         questionMarkArea.setTouchable(Touchable.enabled);
-        questionMarkArea.addListener(new StarterSecondaryInfoBoardCallerClickListener(() -> construction, screen));
+        questionMarkArea.addListener(new StarterSecondaryInfoBoardCallerClickListener<>(() -> construction, screen));
         this.add(questionMarkArea)
                 .width(screen.getIdleMushroomPlayScreenLayoutConst().questionMarkAreaSize)
                 .height(screen.getIdleMushroomPlayScreenLayoutConst().questionMarkAreaSize)
@@ -142,7 +138,7 @@ public class WorldEmptyDetailNode extends BaseCellDetailNodeVM {
                 ConstructionBuyCandidateConfig constructionBuyCandidateConfig
         ) {
             super();
-            final PlayScreenLayoutConst playScreenLayoutConst = parent.getLayoutConst();
+            final IdleMushroomPlayScreenLayoutConst playScreenLayoutConst = parent.getLayoutConst();
             this.parent = parent;
             this.constructionBuyCandidateConfig = constructionBuyCandidateConfig;
             this.model = model;
@@ -151,7 +147,7 @@ public class WorldEmptyDetailNode extends BaseCellDetailNodeVM {
             int CHILD_HEIGHT = playScreenLayoutConst.CONSTRUCION_CHILD_BUTTON_HEIGHT;
             int NAME_CHILD_HEIGHT = playScreenLayoutConst.CONSTRUCION_CHILD_NAME_HEIGHT;
 
-            this.constructionNameLabel = new Label(constructionBuyCandidateConfig.getPrototypeId(), parent.getGame().getMainSkin());
+            this.constructionNameLabel = new Label("", parent.getGame().getMainSkin());
             constructionNameLabel.setWrap(true);
 
             this.buyButton = new TextButton(model.getDescriptionPackage().getTransformButtonText(), parent.getGame().getMainSkin());
@@ -170,7 +166,7 @@ public class WorldEmptyDetailNode extends BaseCellDetailNodeVM {
             this.add(constructionNameLabel).size(CHILD_WIDTH, CHILD_HEIGHT).row();
             this.add(costPart).row();
             this.add(buyButton).size(CHILD_WIDTH, CHILD_HEIGHT).row();
-            this.setBackground(parent.getGame().getIdleMushroomTextureManager().getTableType5Drawable());
+            this.setBackground(parent.getGame().getTextureManager().getTableType5Drawable());
         }
 
         public void update() {
@@ -183,21 +179,23 @@ public class WorldEmptyDetailNode extends BaseCellDetailNodeVM {
             } else {
                 setVisible(true);
                 //textButton.setVisible(true);
-                //Gdx.app.log("ConstructionView", model.getName() + " set to its view");
+                //Gdx.app.log("ConstructionView", model.getDescriptionPackage().getName() + " set to its view");
             }
             // ------ update text ------
             constructionNameLabel.setText(
                     parent.getGame()
                             .getIdleGameplayExport()
                             .getGameplayContext()
-                            .getGameDictionary()
-                            .constructionPrototypeIdToShowName(
-                                    parent.getGame().getIdleGameplayExport().getLanguage(),
-                                    constructionBuyCandidateConfig.getPrototypeId()
-                            )
+                            .getConstructionFactory()
+                            .getPrototype(constructionBuyCandidateConfig.getPrototypeId())
+                            .getDescriptionPackage()
+                            .getName()
             );
             costPart.clearChildren();
-            ConstructionDetailPartVM.resourcePackAsActor(constructionBuyCandidateConfig.getBuyCostPack(), costPart, parent);
+            ConstructionDetailPartVM.resourcePackAsActor(
+                    constructionBuyCandidateConfig.getBuyDescriptionStart(),
+                    constructionBuyCandidateConfig.getBuyCostPack(),
+                    costPart, parent);
             // ------ update clickable-state ------
             boolean canBuyInstanceOfPrototype = parent.getGame().getIdleGameplayExport().getGameplayContext().getConstructionManager()
                     .canBuyInstanceOfPrototype(constructionBuyCandidateConfig, model.getPosition());

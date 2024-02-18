@@ -2,28 +2,23 @@ package hundun.gdxgame.idlemushroom.ui.screen;
 
 import com.badlogic.gdx.InputProcessor;
 import hundun.gdxgame.idlemushroom.IdleMushroomGame;
-import hundun.gdxgame.idlemushroom.logic.DemoScreenId;
-import hundun.gdxgame.idlemushroom.logic.ResourceType;
+import hundun.gdxgame.idlemushroom.logic.id.IdleMushroomBuffId;
+import hundun.gdxgame.idlemushroom.logic.id.IdleMushroomScreenId;
+import hundun.gdxgame.idlemushroom.logic.id.ResourceType;
 import hundun.gdxgame.idlemushroom.ui.achievement.AllAchievementBoardVM;
-import hundun.gdxgame.idlemushroom.ui.screen.IdleMushroomScreenContext.IdleMushroomPlayScreenLayoutConst;
 import hundun.gdxgame.idlemushroom.ui.shared.BaseIdleMushroomScreen;
 import hundun.gdxgame.idleshare.gamelib.framework.callback.IAchievementStateChangeListener;
-import hundun.gdxgame.idleshare.gamelib.framework.model.achievement.AbstractAchievement;
-import hundun.gdxgame.idleshare.gamelib.framework.model.manager.AchievementManager.AchievementState;
+import hundun.gdxgame.idleshare.gamelib.framework.model.achievement.AbstractAchievementPrototype;
+import hundun.gdxgame.idleshare.gamelib.framework.model.achievement.AchievementManager.AchievementState;
 
-public class DemoAchievementScreen extends BaseIdleMushroomScreen implements IAchievementStateChangeListener {
+public class IdleMushroomAchievementScreen extends BaseIdleMushroomScreen implements IAchievementStateChangeListener {
 
     AllAchievementBoardVM allAchievementBoardVM;
 
 
 
-    public DemoAchievementScreen(IdleMushroomGame game) {
-        super(game, DemoScreenId.SCREEN_ACHIEVEMENT, game.getIdleMushroomPlayScreenLayoutConst());
-    }
-
-    @Override
-    protected void updateUIForShow() {
-
+    public IdleMushroomAchievementScreen(IdleMushroomGame game) {
+        super(game, IdleMushroomScreenId.SCREEN_ACHIEVEMENT, game.getIdleMushroomPlayScreenLayoutConst());
     }
 
     @Override
@@ -47,10 +42,16 @@ public class DemoAchievementScreen extends BaseIdleMushroomScreen implements IAc
         super.lazyInitLogicContext();
 
         storageInfoTable.lazyInit(ResourceType.VALUES_FOR_SHOW_ORDER);
+        buffInfoBoard.lazyInit(IdleMushroomBuffId.VALUES_FOR_SHOW_ORDER);
     }
 
     @Override
-    public void onAchievementStateChange(AbstractAchievement achievement, AchievementState state) {
+    public void onAchievementStateChange(AbstractAchievementPrototype achievement, AchievementState state) {
         allAchievementBoardVM.updateData();
+    }
+
+    @Override
+    public void onLogicFrame() {
+
     }
 }

@@ -12,20 +12,20 @@ import com.badlogic.gdx.utils.Align;
 import hundun.gdxgame.gamelib.base.util.JavaFeatureForGwt;
 import hundun.gdxgame.gamelib.starter.listerner.IGameAreaChangeListener;
 import hundun.gdxgame.gamelib.starter.listerner.ILogicFrameListener;
-import hundun.gdxgame.idlemushroom.logic.IdleMushroomConstructionPrototypeId;
+import hundun.gdxgame.idlemushroom.logic.id.IdleMushroomConstructionPrototypeId;
 import hundun.gdxgame.idlemushroom.ui.screen.IdleMushroomScreenContext.IdleMushroomPlayScreenLayoutConst;
-import hundun.gdxgame.idlemushroom.ui.screen.MainPlayScreen;
+import hundun.gdxgame.idlemushroom.ui.screen.IdleMushroomMainPlayScreen;
 import hundun.gdxgame.idlemushroom.ui.shared.BaseCellDetailNodeVM;
 import hundun.gdxgame.idlemushroom.ui.shared.ConstructionDetailPartVM;
-import hundun.gdxgame.idleshare.core.starter.ui.component.board.construction.impl.StarterConstructionControlNode.StarterSecondaryInfoBoardCallerClickListener;
+import hundun.gdxgame.idleshare.core.framework.StarterSecondaryInfoBoardCallerClickListener;
 import hundun.gdxgame.idleshare.gamelib.framework.callback.IConstructionCollectionListener;
 import hundun.gdxgame.idleshare.gamelib.framework.callback.ISecondaryInfoBoardCallback;
 import hundun.gdxgame.idleshare.gamelib.framework.model.construction.base.BaseConstruction;
+import hundun.gdxgame.idleshare.gamelib.framework.model.construction.base.DescriptionPackage;
 import hundun.gdxgame.idleshare.gamelib.framework.model.construction.base.UpgradeComponent.UpgradeState;
 import hundun.gdxgame.idleshare.gamelib.framework.model.grid.GridPosition;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 /**
@@ -36,18 +36,18 @@ public class MainScreenConstructionControlBoard extends Table
         implements ILogicFrameListener, IGameAreaChangeListener, IConstructionCollectionListener
 {
 
-    MainPlayScreen parent;
-    protected ISecondaryInfoBoardCallback<BaseConstruction> callback;
+    IdleMushroomMainPlayScreen parent;
+    protected ISecondaryInfoBoardCallback<Object> callback;
 
     protected SellerPart sellerPart;
     protected EpochPart epochPart;
 
-    public MainScreenConstructionControlBoard(MainPlayScreen parent, ISecondaryInfoBoardCallback<BaseConstruction> callback) {
+    public MainScreenConstructionControlBoard(IdleMushroomMainPlayScreen parent, ISecondaryInfoBoardCallback<Object> callback) {
         this.parent = parent;
         this.callback = callback;
 
 
-        this.setBackground(parent.getGame().getIdleMushroomTextureManager().getTableType1Drawable());
+        this.setBackground(parent.getGame().getTextureManager().getTableType1Drawable());
         this.pad(20);
 
         if (parent.getGame().debugMode) {
@@ -96,13 +96,10 @@ public class MainScreenConstructionControlBoard extends Table
                 .orElse(null);
         this.epochPart.updateForNewConstruction(epochConstruction, null);
 
-        parent.getGame().getFrontend().log("ConstructionInfoBorad",
-                "Constructions change to: " + singletonConstructions.stream().map(BaseConstruction::getName).collect(Collectors.joining(","))
-        );
     }
 
     public static class EpochPart extends BaseCellDetailNodeVM {
-        MainPlayScreen parent;
+        IdleMushroomMainPlayScreen parent;
         BaseConstruction model;
         Label constructionNameLabel;
 
@@ -116,8 +113,8 @@ public class MainScreenConstructionControlBoard extends Table
 
 
         public EpochPart(
-                MainPlayScreen parent,
-                ISecondaryInfoBoardCallback<BaseConstruction> callback) {
+                IdleMushroomMainPlayScreen parent,
+                ISecondaryInfoBoardCallback<Object> callback) {
             super();
             final IdleMushroomPlayScreenLayoutConst playScreenLayoutConst = parent.getIdleMushroomPlayScreenLayoutConst();
             this.parent = parent;
@@ -139,20 +136,20 @@ public class MainScreenConstructionControlBoard extends Table
                 public void changed(ChangeEvent event, Actor actor) {
                     Gdx.app.log(SellerPart.class.getSimpleName(), "upgradeButton changed");
                     model.getUpgradeComponent().doUpgrade();
-                    parent.getGame().doChangeEpoch(model);
+                    parent.getGame().getIdleMushroomExtraGameplayExport().doChangeEpoch(model.getSaveData().getLevel());
                 }
             });
 
             this.workingLevelLabel = new Label("", parent.getGame().getMainSkin());
             workingLevelLabel.setAlignment(Align.center);
 
-            Container<?> questionMarkArea = new Container<>(new Image(parent.getGame().getIdleMushroomTextureManager().getQuestionMarkTexture()));
-            questionMarkArea.setBackground(parent.getGame().getIdleMushroomTextureManager().getQuestionMarkTableDrawable());
+            Container<?> questionMarkArea = new Container<>(new Image(parent.getGame().getTextureManager().getQuestionMarkTexture()));
+            questionMarkArea.setBackground(parent.getGame().getTextureManager().getQuestionMarkTableDrawable());
             questionMarkArea.setTouchable(Touchable.enabled);
-            questionMarkArea.addListener(new StarterSecondaryInfoBoardCallerClickListener(() -> model, parent));
+            questionMarkArea.addListener(new StarterSecondaryInfoBoardCallerClickListener<>(() -> model, parent));
 
             // ------ this ------
-            leftPart.add(constructionNameLabel).size(CHILD_WIDTH, NAME_CHILD_HEIGHT);
+            leftPart.add(constructionNameLabel).size(playScreenLayoutConst.SELLER_PART_NAME_WIDTH, NAME_CHILD_HEIGHT);
             leftPart.add(questionMarkArea)
                     .size(parent.getIdleMushroomPlayScreenLayoutConst().questionMarkAreaSize, parent.getIdleMushroomPlayScreenLayoutConst().questionMarkAreaSize)
                     .row();
@@ -162,28 +159,24 @@ public class MainScreenConstructionControlBoard extends Table
             this.add(leftPart).padRight(20);
             this.add(epochDetailPart);
 
-            this.setBackground(parent.getGame().getIdleMushroomTextureManager().getTableType3Drawable());
+            this.setBackground(parent.getGame().getTextureManager().getTableType3Drawable());
         }
 
         private void update() {
             // ------ update show-state ------
             if (model == null) {
                 setVisible(false);
-                //textButton.setVisible(false);
-                //Gdx.app.log("ConstructionView", this.hashCode() + " no model");
                 return;
             } else {
                 setVisible(true);
-                //textButton.setVisible(true);
-                //Gdx.app.log("ConstructionView", model.getName() + " set to its view");
             }
             // ------ update text ------
             constructionNameLabel.setText(JavaFeatureForGwt.stringFormat(
                     "%s",
-                    model.getName()
+                    model.getDescriptionPackage().getName()
             ));
             upgradeButton.setText(model.getDescriptionPackage().getUpgradeButtonText());
-            workingLevelLabel.setText(model.getLevelComponent().getWorkingLevelDescription());
+            workingLevelLabel.setText(DescriptionPackage.Helper.getWorkingLevelDescription(model));
 
 
             // ------ update clickable-state ------
@@ -216,8 +209,8 @@ public class MainScreenConstructionControlBoard extends Table
     }
 
     public static class SellerPart extends BaseCellDetailNodeVM {
-        MainPlayScreen parent;
-        BaseConstruction model;
+        IdleMushroomMainPlayScreen parent;
+        BaseConstruction construction;
         Label constructionNameLabel;
         TextButton upWorkingLevelButton;
         TextButton downWorkingLevelButton;
@@ -232,8 +225,8 @@ public class MainScreenConstructionControlBoard extends Table
 
 
         public SellerPart(
-                MainPlayScreen parent,
-                ISecondaryInfoBoardCallback<BaseConstruction> callback) {
+                IdleMushroomMainPlayScreen parent,
+                ISecondaryInfoBoardCallback<Object> callback) {
             super();
             final IdleMushroomPlayScreenLayoutConst playScreenLayoutConst = parent.getIdleMushroomPlayScreenLayoutConst();
             this.parent = parent;
@@ -253,7 +246,7 @@ public class MainScreenConstructionControlBoard extends Table
                 @Override
                 public void changed(ChangeEvent event, Actor actor) {
                     Gdx.app.log(SellerPart.class.getSimpleName(), "upgradeButton changed");
-                    model.getUpgradeComponent().doUpgrade();
+                    construction.getUpgradeComponent().doUpgrade();
                 }
             });
 
@@ -265,10 +258,10 @@ public class MainScreenConstructionControlBoard extends Table
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
                     Gdx.app.log("ConstructionView", "down clicked");
-                    model.getLevelComponent().changeWorkingLevel(-1);
+                    construction.getLevelComponent().changeWorkingLevel(-1);
                 }
             });
-            changeWorkingLevelGroup.add(downWorkingLevelButton).size(CHILD_WIDTH / 4, CHILD_HEIGHT);
+            changeWorkingLevelGroup.add(downWorkingLevelButton).size(CHILD_WIDTH / 4.0f, CHILD_HEIGHT);
 
             this.workingLevelLabel = new Label("", parent.getGame().getMainSkin());
             workingLevelLabel.setAlignment(Align.center);
@@ -278,17 +271,17 @@ public class MainScreenConstructionControlBoard extends Table
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
                     Gdx.app.log(SellerPart.class.getSimpleName(), "up clicked");
-                    model.getLevelComponent().changeWorkingLevel(1);
+                    construction.getLevelComponent().changeWorkingLevel(1);
                 }
             });
-            changeWorkingLevelGroup.add(upWorkingLevelButton).size(CHILD_WIDTH / 4, CHILD_HEIGHT);
+            changeWorkingLevelGroup.add(upWorkingLevelButton).size(CHILD_WIDTH / 4.0f, CHILD_HEIGHT);
 
             detailGroup = new Table();
 
-            Container<?> questionMarkArea = new Container<>(new Image(parent.getGame().getIdleMushroomTextureManager().getQuestionMarkTexture()));
-            questionMarkArea.setBackground(parent.getGame().getIdleMushroomTextureManager().getQuestionMarkTableDrawable());
+            Container<?> questionMarkArea = new Container<>(new Image(parent.getGame().getTextureManager().getQuestionMarkTexture()));
+            questionMarkArea.setBackground(parent.getGame().getTextureManager().getQuestionMarkTableDrawable());
             questionMarkArea.setTouchable(Touchable.enabled);
-            questionMarkArea.addListener(new StarterSecondaryInfoBoardCallerClickListener(() -> model, parent));
+            questionMarkArea.addListener(new StarterSecondaryInfoBoardCallerClickListener<>(() -> construction, parent));
 
             // ------ this ------
             leftPart.add(constructionNameLabel).size(CHILD_WIDTH, NAME_CHILD_HEIGHT);
@@ -302,12 +295,12 @@ public class MainScreenConstructionControlBoard extends Table
             this.add(leftPart).padRight(20);
             this.add(detailGroup);
 
-            this.setBackground(parent.getGame().getIdleMushroomTextureManager().getTableType3Drawable());
+            this.setBackground(parent.getGame().getTextureManager().getTableType3Drawable());
         }
 
         private void update() {
             // ------ update show-state ------
-            if (model == null) {
+            if (construction == null) {
                 setVisible(false);
                 //textButton.setVisible(false);
                 //Gdx.app.log("ConstructionView", this.hashCode() + " no model");
@@ -315,35 +308,42 @@ public class MainScreenConstructionControlBoard extends Table
             } else {
                 setVisible(true);
                 //textButton.setVisible(true);
-                //Gdx.app.log("ConstructionView", model.getName() + " set to its view");
+                //Gdx.app.log("ConstructionView", model.getDescriptionPackage().getName() + " set to its view");
             }
 
             detailGroup.clearChildren();
-            ConstructionDetailPartVM.resourcePackAsActor(model.getOutputComponent().getOutputCostPack(), detailGroup, parent);
+            ConstructionDetailPartVM.resourcePackAsActor(
+                    construction.getDescriptionPackage().getOutputCostDescriptionStart(),
+                    construction.getOutputComponent().getOutputCostPack(),
+                    detailGroup, parent);
 
-            ConstructionDetailPartVM.resourcePackAsActor(model.getOutputComponent().getOutputGainPack(), detailGroup, parent);
+            ConstructionDetailPartVM.resourcePackAsActor(
+                    construction.getDescriptionPackage().getOutputGainDescriptionStart(),
+                    construction.getOutputComponent().getOutputGainPack(),
+                    detailGroup, parent);
 
-            if (model.getUpgradeComponent().getUpgradeState() == UpgradeState.HAS_NEXT_UPGRADE) {
-                ConstructionDetailPartVM.resourcePackAsActor(model.getUpgradeComponent().getUpgradeCostPack(), detailGroup, parent);
-            } else if (model.getUpgradeComponent().getUpgradeState() == UpgradeState.REACHED_MAX_UPGRADE_NO_TRANSFER
-                || model.getUpgradeComponent().getUpgradeState() == UpgradeState.REACHED_MAX_UPGRADE_HAS_TRANSFER
+            if (construction.getUpgradeComponent().getUpgradeState() == UpgradeState.HAS_NEXT_UPGRADE) {
+                ConstructionDetailPartVM.resourcePackAsActor(
+                        construction.getDescriptionPackage().getUpgradeCostDescriptionStart(),
+                        construction.getUpgradeComponent().getUpgradeCostPack(),
+                        detailGroup,
+                        parent);
+            } else if (construction.getUpgradeComponent().getUpgradeState() == UpgradeState.REACHED_MAX_UPGRADE_NO_TRANSFER
+                || construction.getUpgradeComponent().getUpgradeState() == UpgradeState.REACHED_MAX_UPGRADE_HAS_TRANSFER
             ) {
-                detailGroup.add(new Label(model.getDescriptionPackage().getUpgradeMaxLevelDescription(), parent.getGame().getMainSkin()))
+                detailGroup.add(new Label(construction.getDescriptionPackage().getUpgradeMaxLevelDescription(), parent.getGame().getMainSkin()))
                         .colspan(2);
             }
 
             // ------ update text ------
-            constructionNameLabel.setText(JavaFeatureForGwt.stringFormat(
-                    "%s",
-                    model.getName()
-            ));
-            upgradeButton.setText(model.getDescriptionPackage().getUpgradeButtonText());
-            workingLevelLabel.setText(model.getLevelComponent().getWorkingLevelDescription());
+            constructionNameLabel.setText(construction.getDescriptionPackage().getName());
+            upgradeButton.setText(construction.getDescriptionPackage().getUpgradeButtonText());
+            workingLevelLabel.setText(DescriptionPackage.Helper.getWorkingLevelDescription(construction));
 
 
             // ------ update clickable-state ------
 
-            if (model.getUpgradeComponent().canUpgrade()) {
+            if (construction.getUpgradeComponent().canUpgrade()) {
                 upgradeButton.setDisabled(false);
                 upgradeButton.getLabel().setColor(Color.WHITE);
             } else {
@@ -351,7 +351,7 @@ public class MainScreenConstructionControlBoard extends Table
                 upgradeButton.getLabel().setColor(Color.RED);
             }
 
-            boolean canUpWorkingLevel = model.getLevelComponent().canChangeWorkingLevel(1);
+            boolean canUpWorkingLevel = construction.getLevelComponent().canChangeWorkingLevel(1);
             if (canUpWorkingLevel) {
                 upWorkingLevelButton.setDisabled(false);
                 upWorkingLevelButton.getLabel().setColor(Color.WHITE);
@@ -360,7 +360,7 @@ public class MainScreenConstructionControlBoard extends Table
                 upWorkingLevelButton.getLabel().setColor(Color.RED);
             }
 
-            boolean canDownWorkingLevel = model.getLevelComponent().canChangeWorkingLevel(-1);
+            boolean canDownWorkingLevel = construction.getLevelComponent().canChangeWorkingLevel(-1);
             if (canDownWorkingLevel) {
                 downWorkingLevelButton.setDisabled(false);
                 downWorkingLevelButton.getLabel().setColor(Color.WHITE);
@@ -376,7 +376,7 @@ public class MainScreenConstructionControlBoard extends Table
 
         @Override
         public void updateForNewConstruction(BaseConstruction construction, GridPosition position) {
-            this.model = construction;
+            this.construction = construction;
             if (construction != null) {
                 if (construction.getLevelComponent().isTypeWorkingLevelChangeable()) {
                     this.upWorkingLevelButton.setVisible(true);

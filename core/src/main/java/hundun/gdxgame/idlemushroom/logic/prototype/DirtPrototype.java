@@ -1,10 +1,10 @@
 package hundun.gdxgame.idlemushroom.logic.prototype;
 
 import hundun.gdxgame.gamelib.base.util.JavaFeatureForGwt;
-import hundun.gdxgame.idlemushroom.logic.DemoBuiltinConstructionsLoader;
-import hundun.gdxgame.idlemushroom.logic.ResourceType;
-import hundun.gdxgame.idlemushroom.logic.construction.BaseIdleDemoConstruction;
-import hundun.gdxgame.idlemushroom.logic.IdleMushroomConstructionPrototypeId;
+import hundun.gdxgame.idlemushroom.logic.loader.IdleMushroomConstructionsLoader;
+import hundun.gdxgame.idlemushroom.logic.id.ResourceType;
+import hundun.gdxgame.idlemushroom.logic.construction.BaseIdleMushroomConstruction;
+import hundun.gdxgame.idlemushroom.logic.id.IdleMushroomConstructionPrototypeId;
 import hundun.gdxgame.idlemushroom.util.IdleMushroomJavaFeatureForGwt;
 import hundun.gdxgame.idleshare.gamelib.framework.data.ChildGameConfig.ConstructionBuyCandidateConfig;
 import hundun.gdxgame.idleshare.gamelib.framework.model.construction.AbstractConstructionPrototype;
@@ -20,20 +20,26 @@ import hundun.gdxgame.idleshare.gamelib.framework.util.text.Language;
 
 public class DirtPrototype extends AbstractConstructionPrototype {
     public static DescriptionPackage descriptionPackageEN = DescriptionPackage.builder()
-            .levelDescriptionProvider(DescriptionPackageFactory.NO_LEVEL_IMP)
+            .name("Empty Tile")
+            .wikiText("Empty Tile" + "：\n" +
+                    "•Can be transformed into other tile.")
             .transformButtonText("Transform")
             .transformCostDescriptionStart("Cost: ")
             .extraTexts(JavaFeatureForGwt.listOf("Candidate: "))
-            .proficiencyDescriptionProvider(DescriptionPackageFactory.EN_PROFICIENCY_IMP)
+            .levelDescriptionProvider(DescriptionPackageFactory.EN_LEVEL_IMP.build())
+            .proficiencyDescriptionProvider(DescriptionPackageFactory.EN_PROFICIENCY_IMP.build())
             .build();
 
 
     public static DescriptionPackage descriptionPackageCN = DescriptionPackage.builder()
-            .levelDescriptionProvider(DescriptionPackageFactory.CN_NO_LEVEL_IMP)
+            .name("空地块")
+            .wikiText("空地块" + "：\n" +
+                    "•可转变为其他地块。")
             .transformButtonText("转变")
             .transformCostDescriptionStart("费用: ")
             .extraTexts(JavaFeatureForGwt.listOf("可转变："))
-            .proficiencyDescriptionProvider(DescriptionPackageFactory.CN_PROFICIENCY_IMP)
+            .levelDescriptionProvider(DescriptionPackageFactory.CN_LEVEL_IMP.build())
+            .proficiencyDescriptionProvider(DescriptionPackageFactory.CN_PROFICIENCY_IMP.build())
             .build();
 
     public DirtPrototype(String prototypeId, Language language) {
@@ -57,7 +63,7 @@ public class DirtPrototype extends AbstractConstructionPrototype {
     public BaseConstruction getInstance(GridPosition position) {
         String id = prototypeId + "_" + IdleMushroomJavaFeatureForGwt.uuid();
 
-        BaseIdleDemoConstruction thiz = new BaseIdleDemoConstruction(prototypeId, id, position, descriptionPackage);
+        BaseIdleMushroomConstruction thiz = new BaseIdleMushroomConstruction(prototypeId, id, position, descriptionPackage);
 
         thiz.setAllowPositionOverwrite(true);
 
@@ -73,7 +79,7 @@ public class DirtPrototype extends AbstractConstructionPrototype {
                 thiz.getExistenceComponent().setBuyCandidateConfigs(JavaFeatureForGwt.listOf(
                         ConstructionBuyCandidateConfig.builder()
                                 .prototypeId(IdleMushroomConstructionPrototypeId.EPOCH_1_MUSHROOM_AUTO_PROVIDER)
-                                .buyCostPack(DemoBuiltinConstructionsLoader.toPack(JavaFeatureForGwt.mapOf(
+                                .buyCostPack(IdleMushroomConstructionsLoader.toPack(JavaFeatureForGwt.mapOf(
                                         ResourceType.MUSHROOM, 50
                                 )))
                                 .build()
@@ -83,7 +89,7 @@ public class DirtPrototype extends AbstractConstructionPrototype {
                 thiz.getExistenceComponent().setBuyCandidateConfigs(JavaFeatureForGwt.listOf(
                         ConstructionBuyCandidateConfig.builder()
                                 .prototypeId(IdleMushroomConstructionPrototypeId.EPOCH_2_MUSHROOM_AUTO_PROVIDER)
-                                .buyCostPack(DemoBuiltinConstructionsLoader.toPack(JavaFeatureForGwt.mapOf(
+                                .buyCostPack(IdleMushroomConstructionsLoader.toPack(JavaFeatureForGwt.mapOf(
                                         ResourceType.MUSHROOM, 100
                                 )))
                                 .build()
@@ -93,7 +99,7 @@ public class DirtPrototype extends AbstractConstructionPrototype {
                 thiz.getExistenceComponent().setBuyCandidateConfigs(JavaFeatureForGwt.listOf(
                         ConstructionBuyCandidateConfig.builder()
                                 .prototypeId(IdleMushroomConstructionPrototypeId.EPOCH_3_MUSHROOM_AUTO_PROVIDER)
-                                .buyCostPack(DemoBuiltinConstructionsLoader.toPack(JavaFeatureForGwt.mapOf(
+                                .buyCostPack(IdleMushroomConstructionsLoader.toPack(JavaFeatureForGwt.mapOf(
                                         ResourceType.MUSHROOM, 200
                                 )))
                                 .build()
